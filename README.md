@@ -6,7 +6,7 @@ Separate Lua-only Clean Building mod. Requires B47ANCEDQuartermaster SupplyAPI 1
 
 SP and multiplayer use the retained guarded native actions. Rooms owns permissions and sandbox settings; Quartermaster owns configured supply storage and native supply transfers; this mod owns the cleaning workflow, menu, action guards and transient jobs. Default recipe: 10 mL bleach first, then water to remaining bucket capacity.
 
-This extraction has not been deployed or published. Native/SP/dedicated acceptance NOT TESTED; G7 and stable G8 BLOCKED. A public GitHub destination awaits approval.
+This extraction has not been deployed or published. Native/SP/dedicated acceptance NOT TESTED; G7 and stable G8 BLOCKED. Public source repository: [B47ANCE/B47ANCEDAutoClean](https://github.com/B47ANCE/B47ANCEDAutoClean). Implementation is on feature/standalone-auto-clean pending PR review.
 
 Run `python tests/run_tests.py` with adjacent Quartermaster and Rooms checkouts.
 The validator reads installed Build 42.21 evidence and never launches the game.
