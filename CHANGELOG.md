@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.1-dev.1] - 2026-10-15
+
+- Compatible PATCH: replace the project/Workshop source thumbnail with the user-supplied Auto Clean artwork. Preserve its original 1254 x 1254 PNG bytes; the in-game icon and poster remain unchanged.
+- PNG integrity and exact source/destination SHA-256 PASS offline (Pillow verification and byte comparison). `python scripts/check_source.py` and `git diff --check` PASS; `python tests/run_tests.py` passes 190 offline scenarios but exits 1 for the existing package-version gate. `python scripts/check_versions.py --root . --json` confirms current source mirrors and reports the two preserved older ZIP mismatches. No gameplay or authority changes. Actual SP/dedicated runtime NOT TESTED; G7/stable G8 BLOCKED. No packaging, deployment or Workshop upload.
+
 ## [0.5.0-dev.1] - 2026-10-15
 
 - Compatible MINOR: retain vanilla current-action progress and add a separate overhead whole-cleaning bar for building and area jobs, using authority-owned processed/total target counts and phase labels.

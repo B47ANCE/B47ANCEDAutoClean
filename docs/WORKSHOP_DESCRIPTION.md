@@ -1,7 +1,7 @@
 # B47ANCE'd Auto Clean
 
 ## Overview
-Separate Clean Building workflow for Build 42.21.0. Version 0.5.0-dev.1.
+Separate Clean Building workflow for Build 42.21.0. Version 0.5.1-dev.1.
 MP testing build - dedicated multiplayer NOT TESTED
 
 ## Features
@@ -24,11 +24,11 @@ Rooms owns cleaning scope settings, borrowing/return policy and permissions. Aut
 
 ## Source Code & Development
 GitHub: https://github.com/B47ANCE/B47ANCEDAutoClean
-Development version 0.5.0-dev.1. This source iteration has not been packaged, deployed or published. Workshop distribution is for testing; G7 remains NOT TESTED / BLOCKED and stable G8 remains BLOCKED.
+Development version 0.5.1-dev.1. This source iteration has not been packaged, deployed or published. Workshop distribution is for testing; G7 remains NOT TESTED / BLOCKED and stable G8 remains BLOCKED.
 
 ## Known Issues
 The conservative native footprint guard can skip unsupported targets, including all targets in some layouts. Ashes, graffiti and arbitrary dirt are unsupported. Native pathfinding, fluids, action reconstruction, observers, cancellation, save/reload, reconnect and restart behavior still require in-game testing. Do not treat offline tests as runtime verification. Update Quartermaster and Auto Clean together when moving from embedded cleaning.
 
 ## Credits & Permissions
-Developed by B47ANCE'd Workshop. Original team implementation extracted from B47ANCE'd Quartermaster with retained provenance. No third-party mod source or assets included. Uses the team's original default branding.
+Developed by B47ANCE'd Workshop. Original team implementation extracted from B47ANCE'd Quartermaster with retained provenance. No third-party mod source or assets included. Uses user-supplied Auto Clean thumbnail artwork; the in-game icon and poster retain the team's default branding.
 Mod ID: B47ANCEDAutoClean.

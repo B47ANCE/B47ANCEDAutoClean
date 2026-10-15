@@ -1,6 +1,6 @@
 # Two overhead progress bars
 
-Project Version: 0.5.0-dev.1
+Project Version: 0.5.1-dev.1
 
 Compatible MINOR presentation feature for existing Clean Building and confirmed
 Clean Area jobs. The native timed-action bar remains unchanged and follows the

@@ -1,6 +1,6 @@
 # Ground trash objects
 
-Project Version: 0.5.0-dev.1
+Project Version: 0.5.1-dev.1
 
 Ground-trash cleanup is part of Clean Building and confirmed Clean Area selections.
 Optional broom use and vanilla action timing replace the earlier unreleased custom pickup timer.
