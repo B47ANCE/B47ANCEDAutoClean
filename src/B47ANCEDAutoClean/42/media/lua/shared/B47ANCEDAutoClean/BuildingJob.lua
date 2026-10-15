@@ -2,6 +2,7 @@
 local Poc=require 'B47ANCEDAutoClean/Poc'
 local B={}
 function B.new(rooms,native)
+ rooms=native.scopes or rooms
  local jobs,owners,claims,history={},{},{},{}
  local requests=setmetatable({},{__mode='k'})
  local api={}
@@ -39,7 +40,7 @@ function B.new(rooms,native)
   return not j.closed and native.actorValid(j.actor) and native.now()-j.time<1800000
    and rooms.validateCleaningBuilding(j.actor,j.scope).status=='ok'
  end
- function api.begin(actor,request)
+ function api.begin(actor,request,selection)
   if not native.server() or not native.actorValid(actor) then return {status='invalid'} end
   if native.canStart and not native.canStart(actor) then return {status='unsupportedEquipment'} end
   local seen=requests[actor]
@@ -50,7 +51,11 @@ function B.new(rooms,native)
   local old=owners[actor]
   if old then return {status=old.request==request and 'waiting' or 'busy',operation=old.request==request and old.id or nil} end
   local count=0;for _ in pairs(owners) do count=count+1 end;if count>=4 then return {status='busy'} end
-  local scope=rooms.beginCleaningBuilding(actor)
+  local scope
+  if selection~=nil then
+   if type(rooms.beginCleaningArea)~='function' then return {status='CleaningUnavailable'} end
+   scope=rooms.beginCleaningArea(actor,selection)
+  else scope=rooms.beginCleaningBuilding(actor) end
   if scope.status~='waiting' then return scope end
   local id=native.id()
   local j={id=id,actor=actor,scope=scope.scope,request=request,time=native.now(),status='ready',phase='waiting',
@@ -66,7 +71,7 @@ function B.new(rooms,native)
   local scope=rooms.readCleaningBuilding(j.actor,j.scope)
   if scope.status=='waiting' then return false end
   if scope.status~='ok' then close(j,'cancelled',scope.status);return false end
-  if not j.survey then j.tiles=scope.tiles;j.options=scope.options;j.survey=native.survey(j.actor,j.tiles,j.options) end
+  if not j.survey then j.tiles=scope.tiles;j.options=scope.options;j.survey=native.survey(j.actor,j.tiles,j.options,j.scope) end
   local result=j.survey.step()
   if result.status=='waiting' then return false end
   if result.status~='ok' then close(j,'cancelled',result.status);return false end

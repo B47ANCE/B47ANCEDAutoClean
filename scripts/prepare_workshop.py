@@ -29,7 +29,7 @@ def main():
         assert (ROOT / 'WORKSHOP_ID.txt').read_text().strip() == str(item)
     report = json.loads((ROOT / 'dist/validation.json').read_text(encoding='utf-8'))
     assert report['result'] == 'PASS OFFLINE' and report['projectVersionObserved'] == version
-    assert report['offlineScenarioGroups'] == 104
+    assert report['offlineScenarioGroups'] >= 132 and report['versionGate'] == 'PASS'
     for relative, digest in report['productionSources'].items():
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == digest
     provider = ROOT.parent / 'B47ANCEDQuartermaster'
@@ -75,7 +75,7 @@ def main():
                     app_id=108600, game_version='42.21.0', steam_build='25485521',
                     package_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),
                     source_sha256={n: hashlib.sha256(p.read_bytes()).hexdigest() for n, p in files.items()},
-                    offline='104 focused scenarios PASS',
+                    offline=f"{report['offlineScenarioGroups']} focused scenarios PASS",
                     validation_sha256=hashlib.sha256((ROOT / 'dist/validation.json').read_bytes()).hexdigest(),
                     quartermaster_commit=report['quartermasterHeadObserved'],
                     quartermaster_supply_api_sha256=report['quartermasterSupplyApiSha256'],

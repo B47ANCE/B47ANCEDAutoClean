@@ -3,7 +3,7 @@
   "canonical": "VERSION",
   "mirrors": [
     {
-      "path": "docs/WORKSHOP_PREPARATION.md",
+      "path": "docs/CLEAN_AREA.md",
       "pattern": "^Project Version: (?P<version>\\S+)$"
     },
     {
@@ -28,10 +28,6 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "pattern": "^Project Version: (?P<version>\\S+)$"
-    },
-    {
-      "path": "docs/ITERATION_REPORT.md",
       "pattern": "^Project Version: (?P<version>\\S+)$"
     }
   ],
@@ -69,6 +65,10 @@
     {
       "reference": "research/auto-clean; tests/fixtures/auto_clean_native_hashes.json",
       "reason": "Original embedded research/native fingerprint evidence retained unchanged with original provenance."
+    },
+    {
+      "reference": "docs/WORKSHOP_PREPARATION.md; docs/ITERATION_REPORT.md; docs/EXTRACTION_PROVENANCE.json; dist/current/B47ANCEDAutoClean-0.1.0-dev.1.zip and checksum",
+      "reason": "Published 0.1.0-dev.1 extraction/distribution evidence preserved unchanged. The stale current artifact deliberately blocks release validation until separately authorized packaging reconciliation."
     }
   ]
 }

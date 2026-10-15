@@ -17,6 +17,8 @@ function N.new(rooms,options)
   if not probe.actorValid(actor) then return false end
   return Supplies.actorAvailable(actor)
  end
+ rooms=require('B47ANCEDAutoClean/AreaScope').new(rooms,p)
+ p.scopes=rooms
  function p.near(actor,square)
   local a=actor:getCurrentSquare()
   return a and square and a:getZ()==square:getZ() and math.max(math.abs(a:getX()-square:getX()),math.abs(a:getY()-square:getY()))<=1
@@ -49,7 +51,7 @@ function N.new(rooms,options)
    and (not instanceof(item,'HandWeapon') or item:getSwingAnim()~='Handgun')
    and item:getType()~='CandleLit' and item:getType()~='Lantern_HurricaneLit' then return 'tool' end
  end
- function p.survey(actor,tiles,options)
+ function p.survey(actor,tiles,options,scope)
   local s={tile=1,object=0,ci=0,item=0,targets={},water={},candidates={bucket={},bleach={},tool={}},seen={},work=0}
   local function candidate(item,record)
    local kind=role(item);if not kind or s.seen[item] then return end
@@ -120,7 +122,7 @@ function N.new(rooms,options)
      local sq=getCell():getGridSquare(tile.x,tile.y,tile.z);if not sq then return {status='buildingUnloaded'} end
      s.square=sq;s.objects=sq:getObjects();s.object=0;s.ci=0;s.waterSeen=false
      if s.objects:size()>512 then return {status='surveyTooLarge'} end
-     if sq:haveBlood() then s.targets[#s.targets+1]=sq end
+     if sq:haveBlood() and (not scope or rooms.cleaningTargetTile(actor,scope,tile.x,tile.y,tile.z)) then s.targets[#s.targets+1]=sq end
     end
    end
    return {status='waiting'}

@@ -66,7 +66,7 @@ getSpecificPlayer=function() return f.actor end
 local options={}
 local context={addOption=function(_,label,target,fn) options[#options+1]={label=label,click=fn};return {} end}
 fire(ce.OnFillWorldObjectContextMenu,0,context,{},false)
-assert(#options==1 and options[1].label=='UI_B47Rooms_CleanBuilding')
+assert(#options==2 and options[1].label=='UI_B47Rooms_CleanBuilding' and options[2].label=='UI_B47AutoClean_CleanArea')
 options[1].click() -- the only user action in this test
 options={};fire(ce.OnFillWorldObjectContextMenu,0,context,{},false)
 assert(#options==1 and options[1].label=='UI_B47Rooms_CancelCleanBuilding')

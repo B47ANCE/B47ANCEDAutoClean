@@ -1,13 +1,13 @@
 # Ownership and extraction
 
-Project Version: 0.1.0-dev.1
+Project Version: 0.2.0-dev.1
 
 B47ANCEDAutoClean is a separate runtime mod with required dependencies
 B47ANCEDQuartermaster and B47ANCEDRooms. The user explicitly requires
 Quartermaster for supply fetching. Quartermaster can run without Auto Clean.
 Rooms remains independent. There is no dependency cycle.
 
-Auto Clean owns the world menu, bounded building workflow, exact resource claims,
+Auto Clean owns the world menu, bounded building and selected-area workflow, exact resource claims,
 recipe/native mutation evidence guards and transient cleanup jobs. Quartermaster
 SupplyAPI 1 owns configured storage queries and guarded native transfer actions.
 Rooms API 1 owns native building scope, permissions and existing cleaning sandbox
@@ -55,3 +55,5 @@ source is shipped, and no Java/JAR/native mod dependency is introduced.
 [RUNTIME GATE] Native SP, split-screen, dedicated join/rejoin, synchronization,
 permission changes, persistence and restarts remain NOT TESTED. G7 and stable G8
 BLOCKED. Static/offline source evidence does not certify Linux or game behavior.
+
+Clean Area uses the Rooms Editor/Draft controls through an Auto Clean subclass. A new transient Auto Clean AreaScope validates plain bounded geometry on authority, retains exact cleaning membership, and separates existing building logistics from selected cleaning targets. No Rooms or Quartermaster source changes are needed. See CLEAN_AREA.md for lifetime, trust boundaries, configuration and tests.

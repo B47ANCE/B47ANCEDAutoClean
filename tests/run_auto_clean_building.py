@@ -58,6 +58,7 @@ if args.source:
             relative=required+'.lua'
             roots=[source_lua/'shared',source_lua/'client',source_lua/'server',
                    rooms/'src/B47ANCEDRooms/42/media/lua/shared',
+                   source_lua/'client',rooms/'src/B47ANCEDRooms/42/media/lua/client',
                    args.game/'media/lua/shared',args.game/'media/lua/client',ROOT.parent/'B47ANCEDQuartermaster/src/B47ANCEDQuartermaster/42/media/lua/shared']
             assert any(relative in {p.relative_to(root).as_posix() for p in root.rglob('*.lua')} for root in roots if root.is_dir()),(module,required)
         if module.stem!='Startup':

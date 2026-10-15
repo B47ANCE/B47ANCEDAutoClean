@@ -4,6 +4,7 @@ local Server=require 'B47ANCEDAutoClean/ServerTransport'
 local Wire=require 'B47ANCEDAutoClean/NativeWire'
 local Job=require 'B47ANCEDAutoClean/BuildingJob'
 local Native=require 'B47ANCEDAutoClean/BuildingNative'
+local Selection=require 'B47ANCEDAutoClean/AreaScope'
 local W={}
 local function service()
  local ok,api=pcall(require,'B47ANCEDRooms/API')
@@ -23,17 +24,20 @@ function W.server()
  local budgets=setmetatable({},{__mode='k'})
  local function handler(module,command,actor,args)
   if module~=Server.module or not native.actorValid(actor) then return end
-  if command~='buildingBegin' and command~='buildingPoll' and command~='buildingCancel' then return end
+  if command~='buildingBegin' and command~='areaBegin' and command~='buildingPoll' and command~='buildingCancel' then return end
   if type(args)~='table' or args.protocol~=1 or not Action.token(args.request) then return end
+  local beginning=command=='buildingBegin' or command=='areaBegin'
   for k in pairs(args) do
-   if k~='protocol' and k~='request' and not (k=='operation' and command~='buildingBegin') and not (k=='begin' and command=='buildingCancel') then return end
+   if k~='protocol' and k~='request' and not (k=='operation' and not beginning)
+    and not (k=='begin' and command=='buildingCancel') and not (k=='rows' and command=='areaBegin') then return end
   end
+  if command=='areaBegin' and type(args.rows)~='table' then return end
   if command=='buildingPoll' and not Action.token(args.operation) or args.operation~=nil and not Action.token(args.operation)
    or command=='buildingCancel' and not Action.token(args.begin) then return end
   local b=budgets[actor];if not b or native.now()-b.time>=1000 then b={time=native.now(),count=0};budgets[actor]=b end
   b.count=b.count+1;if b.count>16 then return end
   local ok,result=pcall(function()
-   if command=='buildingBegin' then return job.begin(actor,args.request) end
+   if beginning then return job.begin(actor,args.request,command=='areaBegin' and args.rows or nil) end
    if command=='buildingCancel' then
     job.cancelRequest(actor,args.begin)
     return args.operation and job.status(actor,args.operation) or {status='cancelled',closed=true}
@@ -86,15 +90,15 @@ local function presentation(rooms,localJob,localNative)
  if localJob then transport,err=require('B47ANCEDAutoClean/LocalQueue').new(localJob,localNative)
  else transport,err=Wire.client({resolve=resolve}) end
  if not transport then return nil,err end
- local active={};local api={active=active,jobs=localJob}
+ local active,selecting={},{};local api={active=active,selecting=selecting,jobs=localJob}
  local handler
  local function send(actor,command,r)
   r.pending=getRandomUUID();r.sent=getTimestampMs()
-  if command=='buildingBegin' then r.begin=r.pending end
+  if command=='buildingBegin' or command=='areaBegin' then r.begin=r.pending end
   if localJob then
    local ok,result=pcall(function()
     if not localNative.actorValid(actor) then return {status='cancelled',closed=true} end
-    if command=='buildingBegin' then return localJob.begin(actor,r.begin) end
+    if command=='buildingBegin' or command=='areaBegin' then return localJob.begin(actor,r.begin,r.selection) end
     if command=='buildingCancel' then
      localJob.cancelRequest(actor,r.begin)
      return r.operation and localJob.status(actor,r.operation) or {status='cancelled',closed=true}
@@ -108,7 +112,8 @@ local function presentation(rooms,localJob,localNative)
    result.protocol=1;result.request=r.pending
    handler(Server.module,'buildingState',result)
   else
-   sendClientCommand(actor,Server.module,command,{protocol=1,request=r.pending,operation=r.operation,begin=command=='buildingCancel' and r.begin or nil})
+   sendClientCommand(actor,Server.module,command,{protocol=1,request=r.pending,operation=r.operation,
+    begin=command=='buildingCancel' and r.begin or nil,rows=command=='areaBegin' and r.selection or nil})
   end
  end
  local function done(actor,r,state)
@@ -123,15 +128,36 @@ local function presentation(rooms,localJob,localNative)
   end
  end
  function api.cancel(actor)
+  local selection=selecting[actor]
+  if selection then selecting[actor]=nil;if selection.panel then selection.panel:closeEditor() end end
   local r=active[actor];if not r then return end
   active[actor]=nil
   send(actor,'buildingCancel',r);transport.cancel(actor)
   if r.walk and r.walk.forceStop then pcall(r.walk.forceStop,r.walk) end
  end
- function api.start(actor)
+ function api.start(actor,rows)
   if localJob and not localNative.actorValid(actor) then return false end
-  if active[actor] or not idle(actor) or not rooms.cleaningOptions().enabled then return false end
-  local r={time=getTimestampMs(),next=0};active[actor]=r;send(actor,'buildingBegin',r);return true
+  if active[actor] or selecting[actor] or not idle(actor) or not rooms.cleaningOptions().enabled then return false end
+  local geometry
+  if rows~=nil then geometry=Selection.normalize(rows,rooms.cleaningOptions().tileLimit);if not geometry or geometry.count==0 then return false end end
+  local r={time=getTimestampMs(),next=0,selection=geometry and geometry.rows};active[actor]=r
+  send(actor,geometry and 'areaBegin' or 'buildingBegin',r);return true
+ end
+ function api.selectArea(actor)
+  if not actor or actor:isDead() or active[actor] or selecting[actor] or not idle(actor) or not rooms.cleaningOptions().enabled then return false end
+  if localJob and not localNative.actorValid(actor) then return false end
+  local num=actor:getPlayerNum()
+  if getSpecificPlayer(num)~=actor then return false end
+  local ok,selector=pcall(require,'B47ANCEDAutoClean/AreaSelector')
+  if not ok or type(selector)~='table' or type(selector.open)~='function' then return false end
+  local record={};selecting[actor]=record
+  record.panel=selector.open(num,function(rows)
+   if selecting[actor]~=record then return end
+   selecting[actor]=nil
+   if getSpecificPlayer(num)==actor and not actor:isDead() then api.start(actor,rows) end
+  end,function() if selecting[actor]==record then selecting[actor]=nil end end)
+  if not record.panel then selecting[actor]=nil;return false end
+  return true
  end
  handler=function(module,command,state)
   if module~=Server.module or command~='buildingState' or type(state)~='table' or state.protocol~=1 then return end
@@ -159,6 +185,7 @@ local function presentation(rooms,localJob,localNative)
  end
  local function tick()
   if localJob then transport.tick() end
+  for actor in pairs(selecting) do if actor:isDead() or getSpecificPlayer(actor:getPlayerNum())~=actor or not idle(actor) then api.cancel(actor) end end
   for actor,r in pairs(active) do
    if actor:isDead() or getTimestampMs()-r.time>=1800000 or r.pending and getTimestampMs()-r.sent>=5000
     or r.walk and getTimestampMs()-r.walkAt>=30000 then api.cancel(actor)
@@ -172,8 +199,10 @@ local function presentation(rooms,localJob,localNative)
   if test then return end
   local actor=getSpecificPlayer(num);if not actor then return end
   if active[actor] then context:addOption(getText('UI_B47Rooms_CancelCleanBuilding'),nil,function() api.cancel(actor) end)
-  elseif rooms.cleaningOptions().enabled and actor:getCurrentSquare() and actor:getCurrentSquare():getBuilding() and idle(actor) then
-   context:addOption(getText('UI_B47Rooms_CleanBuilding'),nil,function() api.start(actor) end)
+  elseif selecting[actor] then context:addOption(getText('UI_B47AutoClean_CancelSelection'),nil,function() api.cancel(actor) end)
+  elseif rooms.cleaningOptions().enabled and actor:getCurrentSquare() and idle(actor) then
+   if actor:getCurrentSquare():getBuilding() then context:addOption(getText('UI_B47Rooms_CleanBuilding'),nil,function() api.start(actor) end) end
+   context:addOption(getText('UI_B47AutoClean_CleanArea'),nil,function() api.selectArea(actor) end)
   end
  end
  if not localJob then Events.OnServerCommand.Add(handler) end
@@ -182,6 +211,7 @@ local function presentation(rooms,localJob,localNative)
  function api.uninstall()
   if closed then return end;closed=true
   for actor in pairs(active) do api.cancel(actor) end
+  for actor in pairs(selecting) do api.cancel(actor) end
   if not localJob then Events.OnServerCommand.Remove(handler) end
   Events.OnTick.Remove(tick);Events.OnFillWorldObjectContextMenu.Remove(menu);transport.uninstall()
  end

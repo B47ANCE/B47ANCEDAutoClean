@@ -115,7 +115,7 @@ check('one menu click fetches walks equips mixes cleans and returns using actual
  local f=setup();local options={}
  local context={addOption=function(_,label,_,fn) options[#options+1]={label=label,click=fn} end}
  for fn in pairs(Events.OnFillWorldObjectContextMenu.handlers) do fn(0,context,{},false) end
- assert(#options==1 and options[1].label=='UI_B47Rooms_CleanBuilding');options[1].click()
+ assert(#options==2 and options[1].label=='UI_B47Rooms_CleanBuilding' and options[2].label=='UI_B47AutoClean_CleanArea');options[1].click()
  assert(not f.ui.start(f.actor),'duplicate begin')
  local op=f.ui.active[f.actor].operation;f:run()
  local r=f.ui.jobs.status(f.actor,op)
@@ -186,6 +186,7 @@ check('local installation and local actors cannot be used by multiplayer clients
  SERVER=true;assert(not W.singlePlayer() and not p.server());SERVER=true;CLIENT=false;assert(not W.singlePlayer() and not p.server())
  SERVER=false;f.ui.uninstall()
 end)
+AUTO_CLEAN_SP_FIXTURE=setup
 Events=nil
 print('PASS '..cases..' SP scenarios OFFLINE: actual native Lua base/queue/actions and Rooms, simulated engine/pathfinding')
 return cases
