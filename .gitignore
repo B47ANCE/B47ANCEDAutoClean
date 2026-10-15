@@ -1,0 +1,15 @@
+dist/
+.test-deps/
+.codex/
+__pycache__/
+*.pyc
+*.log
+*.zip
+*.ini
+*.vdf
+.env*
+local.settings*
+*.pem
+*.key
+console.txt
+server-console*
