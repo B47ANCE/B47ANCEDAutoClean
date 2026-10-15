@@ -43,8 +43,9 @@ old active embedded cleaners before installing a menu/class/command listener.
 
 Upgrade requires the new Quartermaster source with SupplyAPI 1, compatible Rooms
 and Auto Clean enabled on every peer. Old Workshop Quartermaster 0.10.0-dev.1 has
-no supply provider. Workshop distribution has not been changed by this extraction;
-Auto Clean has no Workshop item yet. Current source is offline testing work.
+no supply provider. Auto Clean is Workshop item 3820151540 and requires both
+Quartermaster (3807217050) and Rooms (3820077442). Workshop distribution is an
+explicitly authorized testing step; actual game acceptance is still pending.
 
 See the sibling Quartermaster docs/SUPPLY_API.md for the public API contract.
 docs/EXTRACTION_PROVENANCE.json records the original source commit/file hashes;

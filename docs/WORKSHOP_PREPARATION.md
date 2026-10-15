@@ -22,13 +22,14 @@ the exact Git commit, package SHA-256, native build and validation report hash.
 Adjacent Quartermaster 0.11.0-dev.1 full Build-Workshop.ps1 validation passed,
 including 30 supply API scenarios and 131-file source/package/staging parity.
 
-No upload or deployment has occurred. Auto Clean has no assigned Workshop ID.
-The zero-ID VDF is an inspectable creation candidate and must not be submitted
-without explicit new-item approval. The paired Quartermaster update remains
-held so embedded cleaning is not removed before the separate item is available.
-On approval, set Quartermaster and Rooms as required Workshop items in addition
-to the existing mod.info dependencies. Preserve Quartermaster's existing item
-and visibility. No Rooms update is necessary for this split.
+The user explicitly authorized creation and public distribution on 2026-10-15.
+SteamCMD successfully created Auto Clean item 3820151540. Both Quartermaster
+3807217050 and Rooms 3820077442 were set and visibly verified as required items.
+The original zero-ID candidate and first-upload evidence are preserved under
+dist/workshop-candidate-20261015. Subsequent preparation uses the assigned ID,
+never another zero-ID request. Quartermaster retains its existing item and
+visibility. No Rooms update is necessary for this split. No local deployment or
+game/server launch is part of this operation.
 
 Actual SP and dedicated acceptance remain NOT TESTED. G7 and stable G8 BLOCKED.
 The authorized Workshop test-build exception does not change these gates.

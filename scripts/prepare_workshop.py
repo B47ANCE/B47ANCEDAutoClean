@@ -25,6 +25,8 @@ def main():
     item = inventory['workshop_id']
     if item is not None and not str(item).isdigit():
         raise SystemExit('Invalid assigned Workshop identity')
+    if item is not None:
+        assert (ROOT / 'WORKSHOP_ID.txt').read_text().strip() == str(item)
     report = json.loads((ROOT / 'dist/validation.json').read_text(encoding='utf-8'))
     assert report['result'] == 'PASS OFFLINE' and report['projectVersionObserved'] == version
     assert report['offlineScenarioGroups'] == 104
@@ -48,6 +50,8 @@ def main():
     spec.loader.exec_module(module)
     description = module.render((ROOT / 'docs/WORKSHOP_DESCRIPTION.md').read_text(encoding='utf-8'),
                                 module.github_url(ROOT))
+    # Steam renders h1; its Workshop page leaves the renderer's size tag literal.
+    description = description.replace('[size=large][b]', '[h1]').replace('[/b][/size]', '[/h1]')
     note = (ROOT / 'docs/WORKSHOP_CHANGELOG.md').read_text(encoding='utf-8').strip()
     for text in (description, note):
         assert 'MP testing build - dedicated multiplayer NOT TESTED' in text
@@ -63,7 +67,8 @@ def main():
                   title="B47ANCE'd Auto Clean", description=description, changenote=note)
     # New-item approval is required before submitting the zero-ID candidate.
     vdf = '"workshopitem"\n{\n' + ''.join(f'    "{k}" "{escape(v)}"\n' for k, v in fields.items()) + '}\n'
-    (output / 'candidate.vdf').write_text(vdf, encoding='utf-8')
+    # SteamCMD on Windows treats BOM-less non-ASCII VDF text as the local codepage.
+    (output / 'candidate.vdf').write_text(vdf, encoding='utf-8-sig')
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     manifest = dict(version=version, git_commit=commit, workshop_id=item,
                     new_item_approval_required=item is None, mod_id='B47ANCEDAutoClean',
