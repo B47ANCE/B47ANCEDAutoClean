@@ -1,0 +1,18 @@
+[
+  "42/icon.png",
+  "42/media/lua/shared/B47ANCEDAutoClean/BuildingJob.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/BuildingNative.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/BuildingWire.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/ClientTransport.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/Guard.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/Identity.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/LocalQueue.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/NativeAction.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/NativePort.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/NativeWire.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/Poc.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/ServerTransport.lua",
+  "42/media/lua/shared/B47ANCEDAutoClean/Startup.lua",
+  "42/mod.info",
+  "42/poster.png"
+]

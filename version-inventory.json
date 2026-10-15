@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "canonical": "VERSION",
+  "mirrors": [
+    {
+      "path": "src/B47ANCEDAutoClean/42/mod.info",
+      "pattern": "^modversion=(?P<version>\\S+)$"
+    },
+    {
+      "path": "src/B47ANCEDAutoClean/42/media/lua/shared/B47ANCEDAutoClean/Identity.lua",
+      "pattern": "version='(?P<version>[^']+)'"
+    },
+    {
+      "path": "README.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "docs/ITERATION_REPORT.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    }
+  ],
+  "changelog": {
+    "path": "CHANGELOG.md",
+    "pattern": "^## \\[(?P<version>[^\\]]+)\\]"
+  },
+  "packaging": {
+    "artifacts": [
+      {
+        "glob": "dist/current/*.zip",
+        "pattern": "B47ANCEDAutoClean-(?P<version>.+)\\.zip",
+        "zip_members": [
+          {
+            "member": "B47ANCEDAutoClean/42/mod.info",
+            "pattern": "^modversion=(?P<version>[^\\r\\n]+)\\r?$"
+          }
+        ]
+      }
+    ]
+  },
+  "other_versions": [
+    {
+      "category": "dependency",
+      "reference": "B47ANCEDQuartermaster SupplyAPI 1 / B47ANCEDRooms API 1 cleaning capability 1",
+      "reason": "Independent service API versions; not project version"
+    },
+    {
+      "category": "pz",
+      "reference": "versionMin 42.21.0",
+      "reason": "Installed game compatibility"
+    }
+  ],
+  "historical": [
+    {
+      "reference": "research/auto-clean; tests/fixtures/auto_clean_native_hashes.json",
+      "reason": "Original embedded research/native fingerprint evidence retained unchanged with original provenance."
+    }
+  ]
+}

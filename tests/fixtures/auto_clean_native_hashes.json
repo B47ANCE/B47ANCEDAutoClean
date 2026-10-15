@@ -1,0 +1,30 @@
+{
+  "build": "42.21.0",
+  "jarSha256": "e1a69eb743ede60b213a0fe7f8b83d4fcab773036d256cc4543a336f3b058a33",
+  "gameFiles": {
+    "media/lua/shared/TimedActions/ISCleanBlood.lua": "794436d74b88f4fe6d231b8e00befd27c3f22485ec650b9767e0760712fea3aa",
+    "media/lua/shared/TimedActions/ISCleanGraffiti.lua": "8bfe14c0b215cfbf349b5e7fe00e62df87286a585ee768567d15d01a71e979b7",
+    "media/lua/shared/TimedActions/ISClearAshes.lua": "0b3d8a9d82ac83e32062eadc5e757bb37361b6a53a3abfa6d19794d8f56564a2",
+    "media/lua/shared/TimedActions/ISCleanBandage.lua": "aca4262c09abc3b7880d7cc0999ef3867f5d1131be641d106e5e658e22259ed6",
+    "media/lua/shared/TimedActions/ISTakeWaterAction.lua": "48aa88c32d2e387897ea7a7696d410ae33517bcf75f2edec3837e090cb3a3456",
+    "media/lua/shared/TimedActions/ISBaseTimedAction.lua": "ad72e57f976bd1564d59d08d98d06f8c8d4acea6386aace48e0d99ce9d02a1f0",
+    "media/lua/shared/TimedActions/ISAddFluidFromItemAction.lua": "559c4a4f885bdc28edd4214adf7375e85e525f2e0c91331f29c1efc6ae00517c",
+    "media/lua/shared/Fluids/ISFluidContainer.lua": "89627dd3a36172fc74be9f340031076550507d36a64bf72bb843d56a54e45cc3",
+    "media/lua/shared/Fluids/ISFluidTransferAction.lua": "9534d2a46ff06d425a0aa89f63c776f118bcdd36a39905748b7c7dfd1f771190",
+    "media/lua/shared/Fluids/ISFluidUtil.lua": "132b815bb32f78628f8942d839526eb0e188fdefab11844afb71b17162cfa5e4",
+    "media/lua/server/BuildingObjects/ISCleanBloodCursor.lua": "2465efd8d6b892ba916ecdfe6ebc7a624fd444b428051fde284ed35c70b6b155",
+    "media/lua/server/BuildingObjects/ISCleanGraffitiCursor.lua": "f26e4fdb7bcd2a3d91258458723eea9515ff3c3e86983d03a7852c2fe59eea9c",
+    "media/lua/client/ISUI/ISWorldObjectContextMenu.lua": "980e67622e34422983cd33d64ea4f6dbff5cdf151a6dd9aef6acb669261fb47f",
+    "media/lua/client/Fluids/ISFluidTransferUI.lua": "f4fa531fc756ecca2a3709130c7f69cb2065cb158ae43141a86cb24fdc041321",
+    "media/lua/client/TimedActions/ISInventoryTransferAction.lua": "96ee554609f9ae029809643d50e4f31dbc5a7d21a558934be0804fd909c345b4",
+    "media/lua/client/TimedActions/WalkToTimedAction.lua": "960a098ccf1c8aee420891881c6921330aac91281278d3f09b6aa90b19dc63a1",
+    "media/lua/shared/Vehicles/TimedActions/ISWashVehicle.lua": "2b70443556bf7b336fc6118fd7e686981425a3ad83b0d111c4364c79abf8aa77",
+    "media/lua/shared/Defines.lua": "68eb8bcabfb54fd658b5ab324ae95f429f46242991038dc5182dd3be69aac47a",
+    "media/scripts/generated/items/normal.txt": "b76cf5f91dce33567ca2bda305c4e450be297aae6b1fc11b5b34dcb280d74567",
+    "media/scripts/generated/items/drainable.txt": "2fc00391613c83d581b53d1142f4f233f8392b29d8f8702fb1b3516b0c047732",
+    "media/scripts/generated/items/weapon.txt": "742414e701d360a9076099f9842bd9cc65c2d9ba9497af8b0ce470ee147467c5",
+    "media/scripts/generated/fluids.txt": "444a9f693d51e557ee782ae761558ba6d6d970d49ed3e7bca586d231195e38c7",
+    "ProjectZomboid64.json": "d9042d298dace3faa63e0a217a6caae69a39ff1bba0dc91a37b28bb08fe800e0"
+  },
+  "provenance": "Hash-only installed API baseline; no game code, player data or launcher contents."
+}
