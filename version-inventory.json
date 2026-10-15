@@ -3,6 +3,18 @@
   "canonical": "VERSION",
   "mirrors": [
     {
+      "path": "docs/WORKSHOP_PREPARATION.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "docs/WORKSHOP_DESCRIPTION.md",
+      "pattern": "^Separate Clean Building workflow for Build 42.21.0. Version (?P<version>[^ ]+)\\.$"
+    },
+    {
+      "path": "docs/WORKSHOP_CHANGELOG.md",
+      "pattern": "^Version (?P<version>\\S+)$"
+    },
+    {
       "path": "src/B47ANCEDAutoClean/42/mod.info",
       "pattern": "^modversion=(?P<version>\\S+)$"
     },
