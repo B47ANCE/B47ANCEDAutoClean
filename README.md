@@ -1,10 +1,12 @@
 # B47ANCE'd Auto Clean
 
-Project Version: 0.4.0-dev.1
+Project Version: 0.5.0-dev.1
 
 Lua-only Clean Building and Clean Area mod. Requires B47ANCEDQuartermaster SupplyAPI 1 and B47ANCEDRooms API 1 cleaning capability 1. Authoritative source: src/B47ANCEDAutoClean/42. Mod ID: B47ANCEDAutoClean. [Workshop item 3820151540](https://steamcommunity.com/sharedfiles/filedetails/?id=3820151540).
 
 Right-click **Clean Area**, select tiles with Rooms rectangle or paint/erase controls, add explicit floors, then choose **Start Cleaning**. Nothing starts until confirmation; Cancel/Escape discard the preview. Clean Building remains available. See [selection behavior, guards and validation](docs/CLEAN_AREA.md).
+
+Two overhead progress bars track cleaning: vanilla shows the current timed action, while a separate bar shows overall processed-target progress and the fetching/preparing/cleaning/returning phase. The overall bar stays visible through the supply return step and clears when the job ends. See [progress behavior and validation](docs/PROGRESS.md).
 
 Clean Building and Clean Area also remove supported vanilla decorative ground trash objects. Dropped inventory items are left alone. An eligible carried or configured-storage broom is equipped and used when available, then borrowed equipment is returned and the original hand restored. Otherwise, trash uses vanilla ground-cover pickup. Vanilla owns action timing and character modifiers; there is no custom pickup-time setting. Server sandbox settings enable trash removal. See [supported objects, equipment, timing and test evidence](docs/TRASH_OBJECTS.md).
 
@@ -15,7 +17,7 @@ MP testing build - dedicated multiplayer NOT TESTED. Both Quartermaster (Worksho
 Run `python tests/run_tests.py` with adjacent Quartermaster and Rooms checkouts.
 The validator reads installed Build 42.21 evidence and never launches the game.
 Use `python scripts/check_versions.py --root .` for version mirrors. Explicit
-packaging is `python scripts/package.py`. Current 0.4.0-dev.1 source is not packaged, deployed or published; Workshop remains 0.1.0-dev.1. The preserved published ZIP in dist/current deliberately blocks the artifact-version gate until separately authorized packaging reconciliation.
+packaging is `python scripts/package.py`. Current 0.5.0-dev.1 source is not packaged, deployed or published; Workshop remains 0.1.0-dev.1. The preserved published ZIP in dist/current deliberately blocks the artifact-version gate until separately authorized packaging reconciliation.
 See [ownership and migration](docs/ARCHITECTURE.md), [historical initial extraction evidence](docs/ITERATION_REPORT.md)
 and [source provenance](docs/EXTRACTION_PROVENANCE.json). Default B47 artwork is
 copied byte-for-byte from the verified team branding manifest; no manual art

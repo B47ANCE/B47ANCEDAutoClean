@@ -1,0 +1,11 @@
+{
+  "gameVersion": "42.21.0",
+  "steamBuild": "25485521",
+  "runtime": "NOT TESTED",
+  "sourceSha256": {
+    "media/lua/client/ISUI/ISProgressBar.lua": "6949218574b36d01e3f61a2331f2c9987fdf6f709cc935bcde746769cda1e2b3",
+    "media/lua/client/ISUI/ISUIElement.lua": "2de4720f995ae35e76a1465c6690ad17fe272e33dec3b106e49c475310440f8f",
+    "media/lua/client/Foraging/ISSearchManager.lua": "6c50503a81392d663c922e20da6e13d70e0ee84fe7437f402b409f726eda9b41"
+  },
+  "scope": "Client widget rendering, input passthrough and overhead viewport projection only"
+}

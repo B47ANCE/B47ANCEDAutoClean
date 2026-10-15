@@ -16,8 +16,10 @@ sys.argv=[str(ROOT/'tests/run_auto_clean_single_player.py'),'--game',str(args.ga
 base=runpy.run_path(str(ROOT/'tests/run_auto_clean_single_player.py'))
 lua=base['base']['lua']
 from audit_trash_api import audit,audit_actions
+from audit_progress_ui import audit as audit_progress
 trash_evidence=audit(args.game)
 vanilla_trash_evidence=audit_actions(args.game)
+progress_evidence=audit_progress(args.game)
 for name in ['TimedActions/ISPickUpGroundCoverItem','TimedActions/ISClearAshes','Util/BuildingHelper']:
     lua.execute('dofile(...)',(args.game/'media/lua/shared'/f'{name}.lua').as_posix())
     lua.execute('package.loaded[...]=true',name)
@@ -25,6 +27,8 @@ lua.execute("package.path=.....'/src/B47ANCEDRooms/42/media/lua/client/?.lua;'..
 lua.execute("package.path=.....'/src/B47ANCEDAutoClean/42/media/lua/client/?.lua;'..package.path",ROOT.as_posix())
 area=lua.execute((ROOT/'tests/test_clean_area.lua').read_text(encoding='utf-8'))
 trash=lua.execute((ROOT/'tests/test_trash.lua').read_text(encoding='utf-8'))
+lua.globals().PROGRESS_TRANSLATIONS=lua.table_from(json.loads((ROOT/'src/B47ANCEDAutoClean/42/media/lua/shared/Translate/EN/UI.json').read_text(encoding='utf-8')))
+progress=lua.execute((ROOT/'tests/test_progress.lua').read_text(encoding='utf-8'))
 selector=lua.execute((ROOT/'tests/test_clean_area_selector.lua').read_text(encoding='utf-8'))
 published=Path.home()/'Tools/SteamCMD/steamapps/workshop/content/108600/3820077442/mods/B47ANCEDRooms/42'
 compat=0
@@ -36,6 +40,8 @@ if (published/'media/lua/client/B47ANCEDRooms/Editor.lua').is_file():
     compat=lua.execute((ROOT/'tests/test_clean_area_selector.lua').read_text(encoding='utf-8'))
     lua.globals().ROOMS_EDITOR_COMPAT_PATH=None
 result={**base['result'],'cleanAreaScenarioGroups':area,'trashScenarioGroups':trash,
+        'progressScenarioGroups':progress,
+        'progressUiEvidence':progress_evidence,
         'trashApiEvidence':trash_evidence,
         'vanillaTrashActionEvidence':vanilla_trash_evidence,
         'selectorScenarioGroups':selector,

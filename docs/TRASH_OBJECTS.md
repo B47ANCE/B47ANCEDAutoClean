@@ -1,9 +1,9 @@
 # Ground trash objects
 
-Project Version: 0.4.0-dev.1
+Project Version: 0.5.0-dev.1
 
-MINOR update to Clean Building and confirmed Clean Area selections: optional broom
-use and vanilla action timing replace the unreleased custom pickup timer.
+Ground-trash cleanup is part of Clean Building and confirmed Clean Area selections.
+Optional broom use and vanilla action timing replace the earlier unreleased custom pickup timer.
 Authoritative source remains src/B47ANCEDAutoClean/42. No Rooms or Quartermaster
 production changes. Dependencies remain mandatory for the integrated workflow.
 
@@ -115,8 +115,8 @@ Stain resource guards and broad native blood-removal footprint are unchanged.
 
 ## Validation
 
-[TESTED: offline] 179 scenario/compatibility checks PASS: the existing 144 checks
-plus 35 ground-trash/broom scenarios. Actual production Auto Clean/Rooms modules,
+[TESTED: offline] 190 scenario/compatibility checks PASS: the existing 144 checks,
+35 ground-trash/broom scenarios and 11 overhead HUD scenarios. Actual production Auto Clean/Rooms modules,
 installed native Lua actions/base/queue, and retained server/client transports run
 in Lua 5.1 with simulated native engine/world/network/pathfinder/clock. Tests cover
 77 sprites and excluded gaps, dropped items/props, same-square index shifts,
@@ -140,8 +140,8 @@ git diff --check
 The full validator exits 1 after recording passing offline scenarios because the
 version/artifact gate fails on exactly the preserved old published ZIP filename
 and its embedded mod.info. All declared current source mirrors match 0.4.0-dev.1.
-Source inventory: 79 files, Lua-only; case-correct requires; exact dependencies;
-10 UI keys and 3 sandbox translation keys with English fallback in 29 languages.
+Source inventory: 80 files, Lua-only; case-correct requires; exact dependencies;
+16 UI keys and 3 sandbox translation keys with English fallback in 29 languages.
 Installed native/API fingerprints pass. Neither dependency source was modified
 by this iteration. No offline pass is presented as a full release-gate pass.
 No package, local deployment, game/server launch or Workshop publication is

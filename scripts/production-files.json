@@ -1,6 +1,7 @@
 [
   "42/icon.png",
   "42/media/lua/client/B47ANCEDAutoClean/AreaSelector.lua",
+  "42/media/lua/client/B47ANCEDAutoClean/Progress.lua",
   "42/media/lua/shared/B47ANCEDAutoClean/AreaScope.lua",
   "42/media/lua/shared/B47ANCEDAutoClean/BuildingJob.lua",
   "42/media/lua/shared/B47ANCEDAutoClean/BuildingNative.lua",

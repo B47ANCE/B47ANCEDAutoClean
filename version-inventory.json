@@ -3,6 +3,10 @@
   "canonical": "VERSION",
   "mirrors": [
     {
+      "path": "docs/PROGRESS.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
       "path": "docs/WORKSHOP_DESCRIPTION.md",
       "pattern": "^Separate Clean Building workflow for Build 42.21.0. Version (?P<version>[^ ]+)\\.$"
     },

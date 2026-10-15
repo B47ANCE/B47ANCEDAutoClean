@@ -80,7 +80,7 @@ function B.new(rooms,native)
   if result.status=='waiting' then return false end
   if result.status~='ok' then close(j,'cancelled',result.status);return false end
   j.targets=result.targets;j.index=1;j.total=#j.targets
-  j.trash=result.trash or {};j.trashIndex=1;j.cleanFailure=result.cleanFailure
+  j.trash=result.trash or {};j.trashTotal=#j.trash;j.trashIndex=1;j.cleanFailure=result.cleanFailure
   if #j.targets==0 and #j.trash==0 then close(j,'done','alreadyClean');return false end
   j.supplies=result.supplies or {};j.sources=result.water;j.survey=nil;j.stage='trashPrepare';j.fetchIndex=1
   if not result.supplies and #j.trash==0 then
@@ -208,6 +208,7 @@ function B.new(rooms,native)
  function api.status(actor,id)
   local j=find(actor,id);if not j then return nil,'notOwned' end
   return {operation=id,id=id,status=j.status,phase=j.phase,reason=j.reason,total=j.total or 0,actions=j.actions,
+   trashTotal=j.trashTotal or 0,surveyed=j.total~=nil,stage=j.stage or 'survey',
    trashRemoved=j.trashRemoved,trashSkipped=j.trashSkipped,alreadyClean=j.alreadyClean,skipped=j.skipped,returned=j.returned,retained=j.retained,unaccounted=j.unaccounted or 0,closed=j.closed==true}
  end
  function api.next(actor,id)

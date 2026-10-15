@@ -1,6 +1,6 @@
 # Ownership and extraction
 
-Project Version: 0.4.0-dev.1
+Project Version: 0.5.0-dev.1
 
 B47ANCEDAutoClean is a separate runtime mod with required dependencies
 B47ANCEDQuartermaster and B47ANCEDRooms. The user explicitly requires
@@ -89,3 +89,13 @@ stain-tool/broom record is claimed, fetched and returned once. Expected hand sta
 tracks intentional broom/stain-tool transitions; completion restores the original
 primary hand and returns borrowed equipment under existing Rooms policy. No new
 save schema, dependency API or client-owned gameplay state is introduced.
+
+Progress.lua adds a separate client-only ISProgressBar above the unchanged native
+current-action bar. BuildingJob exposes its existing processed-target counters,
+the surveyed trash total and stage as read-only metadata; BuildingWire includes
+an actor-owned progress snapshot in existing buildingState responses. No new
+client request fields or gameplay mutations are admitted. The exact local actor
+and active record own each viewport-bound widget. The target percentage includes
+processed/already-clean/skipped work and can reach 100% during final supply
+returns, whose phase remains visible until the job closes. See PROGRESS.md for
+rendering, lifecycle, localization, protocol compatibility and validation limits.

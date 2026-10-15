@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.0-dev.1] - 2026-10-15
+
+- Compatible MINOR: retain vanilla current-action progress and add a separate overhead whole-cleaning bar for building and area jobs, using authority-owned processed/total target counts and phase labels.
+- Presentation only: no action timing, mutation, supply return, sender/reconstruction, scope or permission changes.
+- 190 offline scenario/compatibility checks PASS, including 11 HUD cases with installed vanilla ISProgressBar and simulated native UI/viewport. Current source mirrors match; the preserved older package still blocks the full artifact-version gate. Actual visual SP/dedicated runtime NOT TESTED, G7 and stable G8 BLOCKED. No packaging, deployment or Workshop publication.
+
 ## [0.4.0-dev.1] - 2026-10-15
 
 - MINOR: use vanilla ground-cover pickup timing and optional broom clearing timing/presentation; fetch an eligible broom through Quartermaster when available, otherwise pick up by hand.

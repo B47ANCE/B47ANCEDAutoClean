@@ -27,6 +27,10 @@ if args.source:
     sys.argv.append('--source')
 base=runpy.run_path(str(ROOT/'tests/run_auto_clean_transport.py'))
 lua=base['lua']
+if args.source:
+    # Existing gameplay fixtures isolate UI. The dedicated HUD suite loads the
+    # production client module and actual vanilla ISProgressBar separately.
+    lua.execute("package.preload['B47ANCEDAutoClean/Progress']=function() return {new=function() return {update=function() end,clear=function() end,close=function() end} end} end")
 lua.execute("package.path=.....'/src/B47ANCEDRooms/42/media/lua/shared/?.lua;'..package.path",rooms.as_posix())
 lua.execute("ItemBodyLocation=setmetatable({},{__index=function(_,k) return k end})")
 native={}

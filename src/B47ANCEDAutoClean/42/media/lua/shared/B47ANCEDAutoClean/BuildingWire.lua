@@ -6,6 +6,16 @@ local Job=require 'B47ANCEDAutoClean/BuildingJob'
 local Native=require 'B47ANCEDAutoClean/BuildingNative'
 local Selection=require 'B47ANCEDAutoClean/AreaScope'
 local W={}
+-- Display-only snapshot. Clients still submit only the existing bounded intents.
+local function withProgress(job,actor,result)
+ local s=result and result.operation and job.status(actor,result.operation)
+ if s then
+  result.progress={known=s.surveyed,total=s.total+s.trashTotal,
+   completed=s.actions+s.alreadyClean+s.skipped+s.trashRemoved+s.trashSkipped,
+   skipped=s.skipped+s.trashSkipped,stage=s.stage,phase=s.phase}
+ end
+ return result
+end
 local function service()
  local ok,api=pcall(require,'B47ANCEDRooms/API')
  if not ok or type(api)~='table' or api.version~=1 or api.ready~=true
@@ -49,6 +59,7 @@ function W.server()
    result={status='cancelled',operation=args.operation,closed=true}
   end
   if not result then return end
+  withProgress(job,actor,result)
   result.protocol=1;result.request=args.request
   sendServerCommand(actor,Server.module,'buildingState',result)
  end
@@ -104,6 +115,8 @@ local function presentation(rooms,localJob,localNative)
  else transport,err=Wire.client({resolve=resolve}) end
  if not transport then return nil,err end
  local active,selecting={},{};local api={active=active,selecting=selecting,jobs=localJob}
+ local hud=require('B47ANCEDAutoClean/Progress').new(active)
+ api.progress=hud
  local handler
  local function send(actor,command,r)
   r.pending=getRandomUUID();r.sent=getTimestampMs()
@@ -122,6 +135,7 @@ local function presentation(rooms,localJob,localNative)
     if r.operation then localJob.cancel(actor,r.operation,'nativeReadFailed') end
     result={status='cancelled',closed=true}
    end
+   withProgress(localJob,actor,result)
    result.protocol=1;result.request=r.pending
    handler(Server.module,'buildingState',result)
   else
@@ -130,6 +144,7 @@ local function presentation(rooms,localJob,localNative)
   end
  end
  local function done(actor,r,state)
+  hud.clear(actor,r)
   active[actor]=nil
   if actor.setHaloNote then
    local message=getText('UI_B47Rooms_CleaningSummary',state.actions or 0,state.skipped or 0,state.retained or 0)
@@ -145,6 +160,7 @@ local function presentation(rooms,localJob,localNative)
   local selection=selecting[actor]
   if selection then selecting[actor]=nil;if selection.panel then selection.panel:closeEditor() end end
   local r=active[actor];if not r then return end
+  hud.clear(actor,r)
   active[actor]=nil
   send(actor,'buildingCancel',r);transport.cancel(actor)
   if r.walk and r.walk.forceStop then pcall(r.walk.forceStop,r.walk) end
@@ -155,6 +171,7 @@ local function presentation(rooms,localJob,localNative)
   local geometry
   if rows~=nil then geometry=Selection.normalize(rows,rooms.cleaningOptions().tileLimit);if not geometry or geometry.count==0 then return false end end
   local r={time=getTimestampMs(),next=0,selection=geometry and geometry.rows};active[actor]=r
+  hud.update(actor,r)
   send(actor,geometry and 'areaBegin' or 'buildingBegin',r);return true
  end
  function api.selectArea(actor)
@@ -182,6 +199,7 @@ local function presentation(rooms,localJob,localNative)
   if not r.operation then r.operation=state.operation end
   if state.closed or state.status=='done' or state.status=='partial' or state.status=='cancelled' or state.status=='uncertain'
    or not r.operation then done(actor,r,state);return end
+  hud.update(actor,r,state.progress)
   if state.status=='action' then
    if not idle(actor) or not Action.phase(state.phase) or not transport.request(actor,r.operation,state.phase) then api.cancel(actor) end
   elseif state.status=='walk' then
@@ -227,7 +245,7 @@ local function presentation(rooms,localJob,localNative)
   for actor in pairs(active) do api.cancel(actor) end
   for actor in pairs(selecting) do api.cancel(actor) end
   if not localJob then Events.OnServerCommand.Remove(handler) end
-  Events.OnTick.Remove(tick);Events.OnFillWorldObjectContextMenu.Remove(menu);transport.uninstall()
+  Events.OnTick.Remove(tick);Events.OnFillWorldObjectContextMenu.Remove(menu);transport.uninstall();hud.close()
  end
  return api
 end

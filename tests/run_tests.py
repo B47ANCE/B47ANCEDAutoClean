@@ -29,6 +29,7 @@ report['quartermasterHeadObserved']=subprocess.check_output(['git','-C',str(qm),
 report['offlineScenarioGroups']=sum(report[k] for k in ['guardScenarioGroups','transportScenarioGroups','buildingScenarioGroups','startupScenarioGroups','singlePlayerScenarioGroups','cleanAreaScenarioGroups','selectorScenarioGroups'])
 report['offlineScenarioGroups']+=report.get('publishedRoomsSelectorScenarioGroups',0)
 report['offlineScenarioGroups']+=report['trashScenarioGroups']
+report['offlineScenarioGroups']+=report['progressScenarioGroups']
 report['versionGate']='PASS' if version_gate.returncode==0 else 'BLOCKED (see version checker output)'
 report['deployment']='NOT PERFORMED';report['workshopPublication']='NOT PERFORMED'
 out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
