@@ -84,11 +84,11 @@
     "Identity.lua"
   ],
   "guardPolicy": "Original mutation/footprint/local/sender/reconstruction code retained; only require namespaces changed in listed modules.",
-  "quartermasterSupplyApiSha256": "6d0be61b6c6eac1dff367ce9d0d776a72407011da90c84381e09004b59044f44",
+  "quartermasterSupplyApiSha256": "85f1361bee0eee15431de3708ff87cd135c91ea3b21708cdd89868b71696594f",
   "gameBuild": "42.21.0",
   "steamBuild": "25485521",
   "SP": "NOT TESTED in PZ",
   "G7": "BLOCKED / NOT TESTED",
   "stableG8": "BLOCKED",
-  "quartermasterSupplyApiCommit": "f274ece1854a1845113f759206243951d2df2cde"
+  "quartermasterSupplyApiCommit": "5712b7a94a5ef92f3fc8ae689d661f9c9c7ac8e6"
 }

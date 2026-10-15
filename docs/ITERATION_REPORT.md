@@ -4,13 +4,13 @@ Project Version: 0.1.0-dev.1
 
 [VERIFIED source] Independent mod identity B47ANCEDAutoClean; required native
 mod.info dependencies B47ANCEDQuartermaster,B47ANCEDRooms. Quartermaster provider
-0.11.0-dev.1 commit f274ece1854a1845113f759206243951d2df2cde is pushed and verified
+0.11.0-dev.1 commit 5712b7a94a5ef92f3fc8ae689d661f9c9c7ac8e6 is pushed and verified
 on its existing public feature branch. Rooms 0.1.0-dev.2 remains unchanged.
 
 [TESTED offline] 104 Auto Clean guard/transport/building/lifecycle/SP scenarios
 pass against actual Quartermaster SupplyAPI and Rooms source plus installed
 vanilla Lua. The native engine, fluid model, world, pathfinder, clocks and
-network are simulated. Full Quartermaster regressions pass, including 29
+network are simulated. Full Quartermaster regressions pass, including 30
 provider scenarios. Exact source inventories: Auto Clean 16 files, Quartermaster
 131 files. Lua-only runtime and case-correct dependency paths were checked.
 
