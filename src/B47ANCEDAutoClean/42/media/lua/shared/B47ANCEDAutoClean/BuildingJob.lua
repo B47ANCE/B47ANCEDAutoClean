@@ -32,7 +32,7 @@ function B.new(rooms,native)
    if ok and carried then j.retained=j.retained+1
    elseif not ok or not observed or not returned then j.unaccounted=j.unaccounted+1 end
   end end
-  j.supplies=nil;j.borrowed=nil;j.targets=nil;j.trash=nil;j.sources=nil;j.record=nil;j.water=nil;j.options=nil;j.originalHand=nil
+  j.supplies=nil;j.borrowed=nil;j.broom=nil;j.expectedHand=nil;j.targets=nil;j.trash=nil;j.sources=nil;j.record=nil;j.water=nil;j.options=nil;j.originalHand=nil
   history[#history+1]=j.id;if #history>32 then jobs[table.remove(history,1)]=nil end
   return false
  end
@@ -60,7 +60,7 @@ function B.new(rooms,native)
   if scope.status~='waiting' then return scope end
   local id=native.id()
   local j={id=id,actor=actor,scope=scope.scope,request=request,time=native.now(),status='ready',phase='waiting',
-   actions=0,trashRemoved=0,trashSkipped=0,alreadyClean=0,skipped=0,skipReasons={},borrowed={},returned=0,retained=0,originalHand=native.hand(actor)}
+   actions=0,trashRemoved=0,trashSkipped=0,alreadyClean=0,skipped=0,skipReasons={},borrowed={},returned=0,retained=0,originalHand=native.hand(actor),expectedHand=native.hand(actor)}
   jobs[id]=j;owners[actor]=j
   remember(actor,request,id)
   return {status='waiting',operation=id}
@@ -82,14 +82,16 @@ function B.new(rooms,native)
   j.targets=result.targets;j.index=1;j.total=#j.targets
   j.trash=result.trash or {};j.trashIndex=1;j.cleanFailure=result.cleanFailure
   if #j.targets==0 and #j.trash==0 then close(j,'done','alreadyClean');return false end
-  j.supplies=result.supplies;j.sources=result.water;j.survey=nil;j.stage='trash';j.fetchIndex=1
-  if not j.supplies then
-   if #j.trash>0 then return true end
+  j.supplies=result.supplies or {};j.sources=result.water;j.survey=nil;j.stage='trashPrepare';j.fetchIndex=1
+  if not result.supplies and #j.trash==0 then
    close(j,'cancelled','missingSupplies');return false
   end
+  j.broom=result.broom
+  if j.broom and claims[j.broom.item] then j.broom=nil end -- optional tool already claimed: use pickup
+  if j.broom and j.broom~=j.supplies.tool then j.supplies.broom=j.broom end
   for _,record in pairs(j.supplies) do if claims[record.item] then close(j,'cancelled','supplyBusy');return false end end
   for _,record in pairs(j.supplies) do claims[record.item]=j end
-  j.poc=Poc.new(native.cleanPort(j.actor,j.scope,j.options))
+  if result.supplies then j.poc=Poc.new(native.cleanPort(j.actor,j.scope,j.options)) end
   return true
  end
  local function ready(j,phase,record,position)
@@ -106,17 +108,31 @@ function B.new(rooms,native)
   if not valid(j) then close(j,'cancelled','scopeChanged');return api.status(actor,id) end
   if j.action then return {status='waiting',operation=id} end
   local supplies=j.supplies
+  if j.stage=='trashPrepare' then
+   if j.broom then
+    if native.hand(actor)~=j.expectedHand then close(j,'cancelled','handsChanged');return api.status(actor,id) end
+    if not native.carried(actor,j.broom.item) then
+     if not j.options.borrow or not native.sourceValid(actor,j.broom,'withdraw') then close(j,'cancelled','supplyChanged');return api.status(actor,id) end
+     return ready(j,'fetch',j.broom,j.broom.square)
+    end
+    if native.hand(actor)~=j.broom.item then
+     return ready(j,'equip',j.broom)
+    end
+   end
+   j.stage='trash'
+  end
   if j.stage=='trash' then
    for _=1,32 do
     local record=j.trash[j.trashIndex]
     if not record then
      if #j.targets==0 or j.cleanFailure then
       if j.cleanFailure then j.skipped=#j.targets end
-      close(j,(j.skipped>0 or j.trashSkipped>0) and 'partial' or 'done',j.cleanFailure or 'complete');return api.status(actor,id)
+      j.stage='return';j.returnIndex=#j.borrowed
+     else j.stage='fetch'
      end
-     j.stage='fetch';break
+     break
     end
-    if native.trashSafe(actor,j.scope,record) then return ready(j,'trash',record,record.square) end
+    if native.trashSafe(actor,j.scope,record) then record.broom=j.broom and j.broom.item;return ready(j,'trash',record,record.square) end
     j.trashSkipped=j.trashSkipped+1;j.trashIndex=j.trashIndex+1
    end
    if j.stage=='trash' then return {status='waiting',operation=id} end
@@ -135,7 +151,7 @@ function B.new(rooms,native)
   end
   if j.stage=='clean' then
    if native.hand(actor)~=supplies.tool.item then
-    if j.equipped or native.hand(actor)~=j.originalHand then close(j,'cancelled','handsChanged');return api.status(actor,id) end
+    if native.hand(actor)~=j.expectedHand then close(j,'cancelled','handsChanged');return api.status(actor,id) end
     return ready(j,'equip',{item=supplies.tool.item})
    end
    for _=1,32 do
@@ -172,15 +188,16 @@ function B.new(rooms,native)
    if j.stage=='clean' then return {status='waiting',operation=id} end
   end
   if j.stage=='return' then
-   if j.originalHand==supplies.tool.item then j.restoreDone=true end
-   if not j.restoreDone and native.hand(actor)==supplies.tool.item then
+   if j.originalHand==j.expectedHand then j.restoreDone=true end
+   if not j.restoreDone then
+    if native.hand(actor)~=j.expectedHand then close(j,'cancelled','handsChanged');return api.status(actor,id) end
     if j.originalHand and native.carried(actor,j.originalHand) then return ready(j,'equip',{item=j.originalHand,restore=true}) end
-    return ready(j,'unequip',{item=supplies.tool.item,restore=true})
+    if j.expectedHand then return ready(j,'unequip',{item=j.expectedHand,restore=true}) end
    end
    j.restoreDone=true
    for _=1,3 do
     local record=j.borrowed[j.returnIndex]
-    if not record then close(j,(j.skipped>0 or j.trashSkipped>0) and 'partial' or 'done',(j.skipped>0 or j.trashSkipped>0) and 'targetsSkipped' or 'complete');return api.status(actor,id) end
+    if not record then close(j,(j.skipped>0 or j.trashSkipped>0) and 'partial' or 'done',j.cleanFailure or ((j.skipped>0 or j.trashSkipped>0) and 'targetsSkipped' or 'complete'));return api.status(actor,id) end
     if not j.options.returns or not native.carried(actor,record.item) or not native.sourceValid(actor,record,'deposit') then
      j.returnIndex=j.returnIndex-1
     else return ready(j,'return',record,record.square) end
@@ -224,7 +241,8 @@ function B.new(rooms,native)
    if phase=='trash' then j.trashRemoved=j.trashRemoved+1;j.trashIndex=j.trashIndex+1
    elseif phase=='fetch' then
     if not native.carried(actor,j.record.item) then close(j,'uncertain','fetchNotObserved');return false end
-    j.borrowed[#j.borrowed+1]=j.record;j.fetchIndex=j.fetchIndex+1
+    j.borrowed[#j.borrowed+1]=j.record
+    if j.stage~='trashPrepare' then j.fetchIndex=j.fetchIndex+1 end
    elseif phase=='return' then
     if native.carried(actor,j.record.item) or not native.returned(j.record) then close(j,'uncertain','returnNotObserved');return false end
     j.record.returned=true;j.returned=j.returned+1;j.returnIndex=j.returnIndex-1
@@ -232,8 +250,10 @@ function B.new(rooms,native)
     local state=j.poc.status(actor,j.child)
     if state.status~='done' then close(j,'uncertain','cleanNotObserved');return false end
     j.child=nil;j.actions=j.actions+1;j.index=j.index+1
-   elseif j.record and j.record.restore then j.restoreDone=true
-   elseif phase=='equip' then j.equipped=true end
+   elseif phase=='equip' or phase=='unequip' then
+    j.expectedHand=phase=='equip' and j.record.item or nil
+    if j.record.restore then j.restoreDone=true end
+   end
    j.action=nil;j.record=nil;j.phase='waiting';j.status='ready'
    if j.cancelReason then close(j,'cancelled',j.cancelReason) end
    return true

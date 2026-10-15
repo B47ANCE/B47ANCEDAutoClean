@@ -24,7 +24,7 @@ def validate():
     sandbox=json.loads((translations/'EN/Sandbox.json').read_text(encoding='utf-8'))
     settings=(SOURCE/'42/media/sandbox-options.txt').read_text(encoding='utf-8')
     names=re.findall(r'^option B47ANCEDAutoClean\.(\w+)',settings,re.M)
-    assert names==['RemoveTrashObjects','TrashPickupSeconds']
+    assert names==['RemoveTrashObjects']
     assert set(sandbox)=={'Sandbox_B47ANCEDAutoClean'}|{'Sandbox_B47ANCEDAutoClean_'+n+s for n in names for s in ['', '_tooltip']}
     used=set()
     for name,path in files.items():

@@ -15,8 +15,12 @@ args=p.parse_args()
 sys.argv=[str(ROOT/'tests/run_auto_clean_single_player.py'),'--game',str(args.game),'--rooms',str(args.rooms)]
 base=runpy.run_path(str(ROOT/'tests/run_auto_clean_single_player.py'))
 lua=base['base']['lua']
-from audit_trash_api import audit
+from audit_trash_api import audit,audit_actions
 trash_evidence=audit(args.game)
+vanilla_trash_evidence=audit_actions(args.game)
+for name in ['TimedActions/ISPickUpGroundCoverItem','TimedActions/ISClearAshes','Util/BuildingHelper']:
+    lua.execute('dofile(...)',(args.game/'media/lua/shared'/f'{name}.lua').as_posix())
+    lua.execute('package.loaded[...]=true',name)
 lua.execute("package.path=.....'/src/B47ANCEDRooms/42/media/lua/client/?.lua;'..package.path",args.rooms.as_posix())
 lua.execute("package.path=.....'/src/B47ANCEDAutoClean/42/media/lua/client/?.lua;'..package.path",ROOT.as_posix())
 area=lua.execute((ROOT/'tests/test_clean_area.lua').read_text(encoding='utf-8'))
@@ -33,6 +37,7 @@ if (published/'media/lua/client/B47ANCEDRooms/Editor.lua').is_file():
     lua.globals().ROOMS_EDITOR_COMPAT_PATH=None
 result={**base['result'],'cleanAreaScenarioGroups':area,'trashScenarioGroups':trash,
         'trashApiEvidence':trash_evidence,
+        'vanillaTrashActionEvidence':vanilla_trash_evidence,
         'selectorScenarioGroups':selector,
         'publishedRoomsSelectorScenarioGroups':compat,
         'publishedRoomsSelectorSourceSha256':hashlib.sha256((published/'media/lua/client/B47ANCEDRooms/Editor.lua').read_bytes()).hexdigest() if compat else None,

@@ -69,14 +69,16 @@ local function presentation(rooms,localJob,localNative)
  local function resolve(actor,view,phase)
   if phase=='trash' then
    if type(view)~='table' or type(view.position)~='table' or type(view.index)~='number' or view.index%1~=0
-    or type(view.ticks)~='number' or view.ticks%50~=0 or view.ticks<50 or view.ticks>500 then return nil end
+    or view.broom~=nil and type(view.broom)~='number' then return nil end
    local p=view.position;local sq=getCell():getGridSquare(p.x,p.y,p.z)
    if not sq or view.index<0 or view.index>=sq:getObjects():size() then return nil end
    local object=sq:getObjects():get(view.index)
    local trash=require 'B47ANCEDAutoClean/Trash'
    local record=trash.capture(object,sq)
    if not record or record.name~=view.sprite then return nil end
-   return trash.presentation(actor,object,view.ticks) -- client never receives a removal callback
+   local broom=view.broom and actor:getInventory():getItemWithID(view.broom)
+   if view.broom and (not trash.broom(broom) or actor:getPrimaryHandItem()~=broom) then return nil end
+   return trash.presentation(actor,object,broom) -- native timing; client never receives a removal callback
   end
   if phase~='fetch' and phase~='return' and phase~='equip' and phase~='unequip' then return nil end
   if type(view)~='table' or type(view.item)~='number' then return nil end

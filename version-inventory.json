@@ -29,6 +29,14 @@
     {
       "path": "docs/TRASH_OBJECTS.md",
       "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "README.md",
+      "pattern": "^packaging is .*? Current (?P<version>\\S+) source"
+    },
+    {
+      "path": "docs/WORKSHOP_DESCRIPTION.md",
+      "pattern": "^Development version (?P<version>\\S+)\\. This source iteration"
     }
   ],
   "changelog": {

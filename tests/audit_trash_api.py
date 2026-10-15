@@ -61,3 +61,48 @@ def audit(game,record=False):
         expected.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
     assert result==json.loads(expected.read_text(encoding='utf-8')),'Trash API evidence changed; re-audit before use'
     return result
+
+
+def audit_actions(game,record=False):
+    """Separate current timing evidence; preserve the earlier removal fixture."""
+    from jawa.cf import ClassFile
+    paths=['media/lua/shared/TimedActions/ISPickUpGroundCoverItem.lua',
+           'media/lua/shared/TimedActions/ISClearAshes.lua',
+           'media/lua/shared/TimedActions/ISBaseTimedAction.lua',
+           'media/lua/shared/Util/BuildingHelper.lua',
+           'media/scripts/generated/items/weapon.txt']
+    hashes={p:hashlib.sha256((game/p).read_bytes()).hexdigest() for p in paths}
+    weapon=(game/paths[-1]).read_text(encoding='utf-8-sig')
+    for name in ['Broom','Broom_Twig']:
+        block=re.search(r'\bitem '+name+r'\s*\{([^}]+)\}',weapon)[1]
+        assert 'base:cleanstains' in block and 'base:clearashes' in block
+    member='zombie/core/NetTimedAction.class';loose=game/member
+    with zipfile.ZipFile(game/'projectzomboid.jar') as archive:
+        data=loose.read_bytes() if loose.exists() else archive.read(member)
+    cf=ClassFile(io.BytesIO(data));methods={};symbols={};numbers={}
+    for method in cf.methods:
+        if method.name.value not in {'getDuration','getAdjustedDuration'}:continue
+        rr=[];refs=[];values=[]
+        for ins in method.code.disassemble():
+            args=[]
+            for operand in ins.operands:
+                if getattr(getattr(operand,'op_type',None),'name',None)=='CONSTANT_INDEX':
+                    c=cf.constants.get(operand.value)
+                    value=c.string.value if hasattr(c,'string') else c.value if hasattr(c,'value') else str(c)
+                    if isinstance(value,str):refs.append(value)
+                    if isinstance(value,(float,int)):values.append(value)
+                    args.append(value)
+                else:args.append(operand.value)
+            rr.append([ins.pos,ins.mnemonic,args])
+        key=method.name.value+method.descriptor.value
+        methods[key]=hashlib.sha256(json.dumps(rr,separators=(',',':')).encode()).hexdigest()
+        symbols[method.name.value]=refs;numbers[method.name.value]=values
+    assert 'getDuration' in symbols['getDuration'] and 'adjustMaxTime' in symbols['getAdjustedDuration']
+    assert 20.0 in numbers['getDuration'] # native milliseconds conversion, not mod gameplay time
+    result={'gameVersion':'42.21.0','steamBuild':'25485521','runtime':'NOT TESTED',
+            'sourceSha256':hashes,'nativeTiming':{'path':member,'origin':'loose' if loose.exists() else 'jar',
+              'classSha256':hashlib.sha256(data).hexdigest(),'methodSha256':methods}}
+    expected=Path(__file__).parent/'fixtures/vanilla_trash_actions_25485521.json'
+    if record:expected.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+    assert result==json.loads(expected.read_text(encoding='utf-8')),'Vanilla cleaning action evidence changed; re-audit first'
+    return result

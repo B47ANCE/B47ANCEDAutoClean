@@ -8,6 +8,7 @@ local function object(f,square,name)
  local o={kind='IsoObject',sq=square,data={},sprite={name=name or 'trash_01_0'}}
  function o.sprite:getName() return self.name end
  function o.sprite:getSpriteGrid() return self.grid end
+ function o.sprite:getProperties() return {has=function(_,key) return key=='CustomName' and self.customName~=nil end,get=function() return self.customName end} end
  function o:getObjectName() return self.objectName or 'IsoObject' end
  function o:getSquare() return self.sq end
  function o:getSprite() return self.sprite end
@@ -33,6 +34,12 @@ local function fixture(mixed,sp)
  if not mixed then f.target.blood=false;f.second.blood=false;f.origin.items={} end
  function f.actor:faceThisObject() end
  function f.actor:SetVariable() end
+ function f.actor:getMoodles() return {getMoodleLevel=function() return 0 end} end
+ function f.actor:getBodyDamage() return {getBodyPart=function() return {getPain=function() return 0 end} end} end
+ function f.actor:getTimedActionTimeModifier() return 1 end
+ function f.actor:getSpriteDef() return {getFrame=function() return 0 end} end
+ function f.actor:setMetabolicTarget() end
+ ISInventoryPage={};CharacterActionAnims={DigShovel='DigShovel'};Metabolics.LightWork=5
  f.trash=object(f,f.target)
  function f:begin(rows)
   if sp then assert(self.ui.start(self.actor,rows));self.id=self.ui.active[self.actor].operation
@@ -43,13 +50,15 @@ local function fixture(mixed,sp)
    local d=self:directive()
    if d.status=='walk' then self.actor.stand=self.cell:getGridSquare(d.position.x,d.position.y,d.position.z)
    elseif d.status=='action' then
-    assert(d.phase=='trash')
+    if d.phase~='trash' then assert(self:performPhase(d.phase))
+    else
     assert(self.transport.command(Server.module,'next',self.actor,{protocol=1,operation=self.id,phase='trash',request=getRandomUUID()}))
     local offer=self.messages[#self.messages].args
     local a=self.transport.class:new(self.actor,self.id,'trash',offer.grant);assert(a)
     a.netAction={getProgress=function() return a.progress or 0 end};assert(a:serverStart())
     local challenge=self.messages[#self.messages].args.challenge
     return a,offer,challenge
+    end
    elseif d.closed then error('closed '..tostring(d.reason)) end
   end
   error('no trash action')
@@ -58,6 +67,17 @@ local function fixture(mixed,sp)
   assert(self.transport.command(Server.module,'confirm',self.actor,{protocol=1,operation=self.id,phase='trash',grant=offer.grant,challenge=challenge}))
  end
  return f
+end
+local function broom(f,carried,kind)
+ local b={};for k,v in pairs(f.tool) do b[k]=v end
+ b.id=4;b.fullType=kind or 'Base.Broom';b.kind='HandWeapon';b.fc=nil;b.broken=false;b.favorite=false
+ function b:getSwingAnim() return 'Bat' end
+ function b:isTwoHandWeapon() return true end
+ function b:getDigType() return nil end
+ function b:getStaticModel() return 'Broom' end
+ function b:getCondition() return self.broken and 0 or 3 end
+ b.container=carried and f.actor.inv or f.origin;b.container.items[b.id]=b
+ return b
 end
 test('77 exact vanilla trash sprites; excluded gaps and unknown prefixes',function()
  local f=fixture();local names={}
@@ -106,10 +126,10 @@ test('sandbox disable preserves stain cleaning and leaves trash in place',functi
  local f=fixture(true);SandboxVars.B47ANCEDAutoClean={RemoveTrashObjects=false}
  f:begin();local r=f:run();assert(r.actions==2 and r.trashRemoved==0 and f.trash.sq==f.target and not f.trashCalls)
 end)
-test('settings defaults bounds malformed values and maximum duration',function()
- local f=fixture();assert(Options.read().trashEnabled and Options.read().trashSeconds==2)
+test('trash enable defaults and obsolete custom duration values are ignored',function()
+ local f=fixture();assert(Options.read().trashEnabled and Options.read().trashSeconds==nil)
  for _,value in ipairs({0,11,1.5,'3',math.huge,0/0}) do
-  SandboxVars.B47ANCEDAutoClean={TrashPickupSeconds=value};assert(Options.read().trashSeconds==2)
+  SandboxVars.B47ANCEDAutoClean={TrashPickupSeconds=value};assert(Options.read().trashSeconds==nil)
  end
  SandboxVars.B47ANCEDAutoClean={RemoveTrashObjects='true'};assert(not Options.read().trashEnabled)
  SandboxVars.B47ANCEDAutoClean={TrashPickupSeconds=10};f:begin();local r=f:run();assert(r.trashRemoved==1)
@@ -130,7 +150,7 @@ test('early completion and progress below one never remove objects',function()
   assert(not a:complete() and f.trash.sq==f.target and not f.trashCalls)
  end
 end)
-test('elapsed configured timing is closure retained and immune to action fields',function()
+test('elapsed vanilla timing is closure retained and immune to action fields',function()
  local f=fixture();f:begin();local a,offer,challenge=f:grant();f:confirm(a,offer,challenge)
  a.maxTime=0;NOW=NOW+1999;a.progress=1;assert(not a:complete() and not f.trashCalls)
 end)
@@ -159,7 +179,7 @@ test('permissions settings cancel disconnect and expiry are rechecked on complet
  for _,change in ipairs({'permission','settings','cancel','disconnect','expiry','foreignActor'}) do
   local f=fixture();f:begin();local a,o,c=f:grant();f:confirm(a,o,c)
   if change=='permission' then f.target.denied=true
-  elseif change=='settings' then SandboxVars.B47ANCEDAutoClean={TrashPickupSeconds=3}
+  elseif change=='settings' then SandboxVars.B47ANCEDAutoClean={RemoveTrashObjects=false}
   elseif change=='cancel' then f.job.cancel(f.actor,f.id)
   elseif change=='disconnect' then f.actor.dead=true
   elseif change=='expiry' then NOW=NOW+120001
@@ -191,9 +211,125 @@ test('actual client wire resolves object presentation with no item ID or removal
  message('buildingState',{protocol=1,request=request,operation='trash-client',status='action',phase='trash'})
  assert(sent[#sent].command=='next');request=sent[#sent].args.request
  message('offer',{protocol=1,request=request,operation='trash-client',phase='trash',grant='trash-grant',view={
-  position={x=10,y=10,z=0},index=f.trash:getObjectIndex(),sprite='trash_01_0',ticks=100}})
+  position={x=10,y=10,z=0},index=f.trash:getObjectIndex(),sprite='trash_01_0'}})
  assert(queued and queued.trashObject==f.trash and queued.maxTime==100)
  assert(not queued:complete() and f.trash.sq==f.target and not f.trashCalls)
+ ui.uninstall();ISTimedActionQueue.add=original
+end)
+test('carried broom uses vanilla clearing duration and restores original hands',function()
+ local f=fixture();local b=broom(f,true);f:begin();local a,o,c=f:grant();f:confirm(a,o,c)
+ assert(f.actor:getPrimaryHandItem()==b and a.trashBroom==b and a:getDuration()==ISClearAshes.getDuration(a))
+ assert(a.adjustMaxTime==ISBaseTimedAction.adjustMaxTime)
+ NOW=NOW+a:adjustMaxTime(a:getDuration())*20;a.progress=1;assert(a:complete())
+ local r=f:run();assert(r.status=='done' and r.trashRemoved==1 and r.returned==0 and f.actor:getPrimaryHandItem()==nil and b.container==f.actor.inv)
+end)
+test('configured broom is fetched equipped swept and returned without stain supplies',function()
+ local f=fixture();local b=broom(f,false);f:begin();local a,o,c=f:grant();f:confirm(a,o,c)
+ assert(a.trashBroom==b and a:getDuration()==60 and b.container==f.actor.inv)
+ NOW=NOW+1200;a.progress=1;assert(a:complete());local r=f:run()
+ assert(r.status=='done' and r.returned==1 and r.retained==0 and b.container==f.origin and f.actor:getPrimaryHandItem()==nil)
+end)
+test('unconfigured denied favorite broken and unborrowable brooms fall back to vanilla pickup',function()
+ for _,case in ipairs({'unconfigured','denied','favorite','broken','borrowDisabled','capacity'}) do
+  local f=fixture();local b=broom(f,false)
+  if case=='unconfigured' then f.crate.unconfigured=true
+  elseif case=='denied' then f.origin.denied=true
+  elseif case=='favorite' then b.favorite=true
+  elseif case=='broken' then b.broken=true
+  elseif case=='borrowDisabled' then SandboxVars.B47ANCEDRooms.CleaningBorrowSupplies=false
+  else f.actor.capacity=0 end
+  f:begin();local a,o,c=f:grant();f:confirm(a,o,c)
+  assert(a.trashBroom==nil and a:getDuration()==ISPickUpGroundCoverItem.getDuration(a),case)
+  NOW=NOW+a:adjustMaxTime(a:getDuration())*20;a.progress=1;assert(a:complete())
+  local r=f:run();assert(r.trashRemoved==1 and r.returned==0 and b.container==f.origin,case)
+ end
+end)
+test('one broom can serve trash and stains without duplicate borrowing or return',function()
+ local f=fixture(true);f.tool.fullType='Base.Broom';function f.tool:getDigType() return nil end
+ f:begin();local r=f:run();assert(r.status=='done' and r.actions==2 and r.trashRemoved==1 and r.returned==3 and f.adds==6 and f.removes==6)
+end)
+test('separate broom and stain tool are both returned with original hands restored',function()
+ local f=fixture(true);local b=broom(f,false);f:begin();local r=f:run()
+ assert(r.status=='done' and r.actions==2 and r.trashRemoved==1 and r.returned==4 and b.container==f.origin and f.actor:getPrimaryHandItem()==nil)
+end)
+test('broom is returned after a mixed job with missing stain supplies',function()
+ local f=fixture(true);f.origin.items={};local b=broom(f,false);f:begin();local r=f:run()
+ assert(r.status=='partial' and r.reason=='missingSupplies' and r.trashRemoved==1 and r.skipped==2 and r.returned==1 and b.container==f.origin)
+end)
+test('broom loss breakage favorite change and unexpected hand change block pending removal',function()
+ for _,change in ipairs({'lost','broken','favorite','hands'}) do
+  local f=fixture();local b=broom(f,true);f:begin();local a,o,c=f:grant();f:confirm(a,o,c)
+  if change=='lost' then f.actor.inv.items[b.id]=nil
+  elseif change=='broken' then b.broken=true
+  elseif change=='favorite' then b.favorite=true
+  else f.actor.tool=f.tool end
+  NOW=NOW+1200;a.progress=1;assert(not a:complete() and not f.trashCalls,change)
+ end
+end)
+test('native pickup moodle modifiers change authority duration without a custom timer',function()
+ for _,elapsed in ipairs({3000,4000}) do
+  local f=fixture();function f.actor:getMoodles() return {getMoodleLevel=function(_,kind) return kind==MoodleType.UNHAPPY and 4 or 0 end} end
+  f:begin();local a,o,c=f:grant();f:confirm(a,o,c)
+  assert(a:getDuration()==100 and a:adjustMaxTime(a:getDuration())==200)
+  NOW=NOW+elapsed;a.progress=1;assert(a:complete()==(elapsed==4000));assert((f.trashCalls or 0)==(elapsed==4000 and 1 or 0))
+ end
+ local f=fixture();function f.actor:getBodyDamage() return {getBodyPart=function() return {getPain=function() return 7 end} end} end
+ f:begin();local a,o,c=f:grant();f:confirm(a,o,c)
+ local nativeMillis=math.floor(a:adjustMaxTime(a:getDuration())*20)
+ NOW=NOW+nativeMillis;a.progress=1;assert(a:complete(),'native whole-millisecond completion')
+end)
+test('vanilla instant pickup remains native and still needs confirmed completed action',function()
+ local f=fixture();function f.actor:isTimedActionInstant() return true end
+ f:begin();local a,o,c=f:grant();f:confirm(a,o,c);assert(a:getDuration()==1)
+ NOW=NOW+20;a.progress=1;assert(a:complete() and f.trashCalls==1)
+end)
+test('native weight inventory and dexterity pickup timing is retained without granting items',function()
+ local f=fixture();f.trash.sprite.customName='PaperTrash'
+ ScriptManager={instance={getItem=function(_,name) return name=='PaperTrash' and {} or nil end}}
+ getItemActualWeight=function() return 0.5 end
+ function f.actor.inv:getCapacityWeight() return 10 end;function f.actor.inv:getMaxWeight() return 20 end
+ getCore=function() return {getGameMode=function() return 'Survival' end} end
+ CharacterTrait={DEXTROUS='dex',ALL_THUMBS='thumbs'}
+ function f.actor:hasTrait(trait) return trait=='dex' end;function f.actor:isWearingAwkwardGloves() return false end
+ f:begin();local a,o,c=f:grant();f:confirm(a,o,c);assert(a:getDuration()==15)
+ NOW=NOW+300;a.progress=1;assert(a:complete() and f.trashCalls==1 and not f.adds)
+end)
+test('single-player broom uses installed sweep start/update and restores original hand',function()
+ local f=fixture(false,true);local b=broom(f,true);f:begin();local id=f.id;local a=f:untilPhase('trash')
+ assert(a.trashBroom==b and a:getDuration()==60)
+ f:run();local r=f.ui.jobs.status(f.actor,id)
+ assert(r.status=='done' and r.trashRemoved==1 and f.actor:getPrimaryHandItem()==nil and b.container==f.actor.inv)
+ f.ui.uninstall()
+end)
+test('twig broom follows vanilla clearing presentation and preserves an occupied original hand',function()
+ local f=fixture(false,true);local b=broom(f,true,'Base.Broom_Twig')
+ f.origin.items[f.tool.id]=nil;f.actor.inv:AddItem(f.tool);f.actor.tool=f.tool
+ f:begin();local id=f.id;local a=f:untilPhase('trash');assert(a.trashBroom==b and a:getDuration()==60)
+ f:run();assert(f.ui.jobs.status(f.actor,id).status=='done' and f.actor:getPrimaryHandItem()==f.tool and b.container==f.actor.inv)
+ f.ui.uninstall()
+end)
+test('single-player native completion respects game-speed acceleration without a wall timer',function()
+ local f=fixture(false,true);f:begin();local id=f.id;local a=f:untilPhase('trash')
+ -- Simulated native game-time advance at accelerated speed, with little wall time.
+ a.action.delta=1;assert(a:complete() and f.trashCalls==1);a:perform()
+ f:run();assert(f.ui.jobs.status(f.actor,id).status=='done');f.ui.uninstall()
+end)
+test('client broom presentation waits for exact equipped-item replication',function()
+ local f=fixture(false,true);local b=broom(f,true);f.ui.uninstall();SERVER=false;CLIENT=true
+ local Action=require 'B47ANCEDAutoClean/NativeAction';_G[Action.name]=nil
+ local sent={};sendClientCommand=function(actor,module,command,args) sent[#sent+1]={command=command,args=args} end
+ local original=ISTimedActionQueue.add;local queued
+ ISTimedActionQueue.add=function(a) queued=a end
+ local ui=assert(require('B47ANCEDAutoClean/BuildingWire').client())
+ local function message(command,args) for fn in pairs(Events.OnServerCommand.handlers) do fn(Server.module,command,args) end end
+ assert(ui.start(f.actor));local request=sent[#sent].args.request
+ message('buildingState',{protocol=1,request=request,operation='broom-client',status='action',phase='trash'})
+ request=sent[#sent].args.request
+ message('offer',{protocol=1,request=request,operation='broom-client',phase='trash',grant='broom-grant',view={
+  position={x=10,y=10,z=0},index=f.trash:getObjectIndex(),sprite='trash_01_0',broom=b.id}})
+ assert(not queued);f.actor.tool=b
+ for fn in pairs(Events.OnTick.handlers) do fn() end
+ assert(queued and queued.trashBroom==b and queued:getDuration()==60 and not queued:complete() and not f.trashCalls)
  ui.uninstall();ISTimedActionQueue.add=original
 end)
 test('single-player native queue cleans objects without networking',function()

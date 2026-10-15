@@ -1,0 +1,21 @@
+{
+  "gameVersion": "42.21.0",
+  "steamBuild": "25485521",
+  "runtime": "NOT TESTED",
+  "sourceSha256": {
+    "media/lua/shared/TimedActions/ISPickUpGroundCoverItem.lua": "1de5b39724df5579653b9aaa50663d107fdf5ef398d71c664bad7c3507e8a039",
+    "media/lua/shared/TimedActions/ISClearAshes.lua": "0b3d8a9d82ac83e32062eadc5e757bb37361b6a53a3abfa6d19794d8f56564a2",
+    "media/lua/shared/TimedActions/ISBaseTimedAction.lua": "ad72e57f976bd1564d59d08d98d06f8c8d4acea6386aace48e0d99ce9d02a1f0",
+    "media/lua/shared/Util/BuildingHelper.lua": "483d49d0255281f1034622bd6d4d132d22b875b544ad01cc65f00e7811b526c9",
+    "media/scripts/generated/items/weapon.txt": "742414e701d360a9076099f9842bd9cc65c2d9ba9497af8b0ce470ee147467c5"
+  },
+  "nativeTiming": {
+    "path": "zombie/core/NetTimedAction.class",
+    "origin": "jar",
+    "classSha256": "d4a3046eeaec409977a756c6ea80b0676229274684012ad51210559ebfcb1090",
+    "methodSha256": {
+      "getDuration()F": "bade69d5e50cd5bc95a1f4935ca2579d367a30aef44f9d8fe49fdd0ddec276f1",
+      "getAdjustedDuration(F)F": "99b17948ef4cbf44a454ce8a139f62b68544c28f27aac7e8bfd5c18337c043f2"
+    }
+  }
+}

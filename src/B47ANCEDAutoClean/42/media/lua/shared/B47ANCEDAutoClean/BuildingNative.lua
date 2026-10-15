@@ -58,7 +58,7 @@ function N.new(rooms,options)
  function p.survey(actor,tiles,options,scope)
   local s={tile=1,object=0,ci=0,item=0,targets={},trash={},water={},candidates={bucket={},bleach={},tool={}},seen={},work=0}
   local function missing(reason)
-   if #s.trash>0 then return {status='ok',targets=s.targets,trash=s.trash,water=s.water,cleanFailure=reason} end
+   if #s.trash>0 then return {status='ok',targets=s.targets,trash=s.trash,broom=s.broom,water=s.water,cleanFailure=reason} end
    return {status=reason}
   end
   local function candidate(item,record)
@@ -113,8 +113,6 @@ function N.new(rooms,options)
     else
      local tile=tiles[s.tile]
      if not tile then
-      if #s.targets==0 then return {status='ok',targets={},trash=s.trash,water=s.water} end
-      local supplies={}
       for _,kind in ipairs({'bucket','bleach','tool'}) do
        table.sort(s.candidates[kind],function(a,b)
         if kind=='tool' and (a.item==actor:getPrimaryHandItem())~=(b.item==actor:getPrimaryHandItem()) then return a.item==actor:getPrimaryHandItem() end
@@ -123,13 +121,22 @@ function N.new(rooms,options)
         local function distance(r) return r.square and math.abs(pos:getX()-r.square:getX())+math.abs(pos:getY()-r.square:getY())+10*math.abs(pos:getZ()-r.square:getZ()) or 0 end
         if distance(a)~=distance(b) then return distance(a)<distance(b) end;return a.item:getID()<b.item:getID()
        end)
+      end
+      if #s.trash>0 then for _,r in ipairs(s.candidates.tool) do
+       if Trash.broom(r.item) and (r.carried or actor:getFreeInventoryCapacity()>=r.item:getActualWeight())
+        and (not r.item:isRequiresEquippedBothHands() or not actor:getSecondaryHandItem() or actor:getSecondaryHandItem()==r.item) then s.broom=r;break end
+      end end
+      if #s.targets==0 then return {status='ok',targets={},trash=s.trash,broom=s.broom,water=s.water} end
+      local supplies={}
+      for _,kind in ipairs({'bucket','bleach','tool'}) do
        supplies[kind]=s.candidates[kind][1];if not supplies[kind] then return missing('missingSupplies') end
       end
       if supplies.tool.item:isRequiresEquippedBothHands() and actor:getSecondaryHandItem() and actor:getSecondaryHandItem()~=supplies.tool.item then return missing('unsupportedEquipment') end
       local needed=10-supplies.bucket.item:getFluidContainer():getAmount()
       for _,r in pairs(supplies) do if not r.carried then needed=needed+r.item:getActualWeight() end end
       if actor:getFreeInventoryCapacity()<needed then return missing('insufficientCapacity') end
-      return {status='ok',targets=s.targets,trash=s.trash,supplies=supplies,water=s.water}
+      if s.broom and not s.broom.carried and s.broom~=supplies.tool and actor:getFreeInventoryCapacity()<needed+s.broom.item:getActualWeight() then s.broom=nil end
+      return {status='ok',targets=s.targets,trash=s.trash,broom=s.broom,supplies=supplies,water=s.water}
      end
      local sq=getCell():getGridSquare(tile.x,tile.y,tile.z);if not sq then return {status='buildingUnloaded'} end
      s.square=sq;s.objects=sq:getObjects();s.object=0;s.ci=0;s.waterSeen=false
@@ -204,7 +211,7 @@ function N.new(rooms,options)
   return phase=='unequip' and a:isValid()
  end
  function p.describe(a,phase)
-  if phase=='trash' then return {position=point(a.trashObject:getSquare()),index=a.trashObject:getObjectIndex(),sprite=a.trashObject:getSprite():getName(),ticks=a.maxTime} end
+  if phase=='trash' then return {position=point(a.trashObject:getSquare()),index=a.trashObject:getObjectIndex(),sprite=a.trashObject:getSprite():getName(),broom=a.trashBroom and a.trashBroom:getID()} end
   if phase=='equip' or phase=='unequip' then return {item=a.item:getID(),ticks=a.maxTime} end
   if phase=='fetch' or phase=='return' then
    local container=phase=='fetch' and a.srcContainer or a.destContainer

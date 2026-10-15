@@ -31,35 +31,52 @@ function T.allowed(actor,record,scope,native,rooms)
   and rooms.cleaningTargetTile(actor,scope,s:getX(),s:getY(),s:getZ())
   and rooms.canCleanBuildingTile(actor,scope,s:getX(),s:getY(),s:getZ()).state=='allow'
 end
-function T.presentation(actor,object,ticks)
- local a=ISBaseTimedAction:new(actor);a.maxTime=ticks;a.trashObject=object
- function a:isValid() return self.trashObject and self.trashObject:getSquare()~=nil end
- function a:getDuration() return ticks end
- function a:adjustMaxTime() return ticks end -- no instant-action timing bypass
- function a:start()
-  self.character:faceThisObject(object);self:setActionAnim('Loot')
-  self.character:SetVariable('LootPosition','Low');self:setOverrideHandModels(nil,nil)
- end
+function T.broom(item)
+ return item and (item:getFullType()=='Base.Broom' or item:getFullType()=='Base.Broom_Twig')
+  and not item:isBroken() and not item:isFavorite() and not item:getIsCraftingConsumed() and item:getAttachedSlot()==-1
+  and not item:isForceDropHeavyItem() and not item:canBeActivated()
+end
+function T.presentation(actor,object,broom)
+ require 'TimedActions/ISPickUpGroundCoverItem'
+ require 'TimedActions/ISClearAshes'
+ require 'Util/BuildingHelper'
+ local a
+ if broom then a=ISClearAshes:new(actor,object)
+ else a=ISPickUpGroundCoverItem:new(actor,object:getSquare(),object) end
+ a.trashObject=object;a.trashBroom=broom
+ -- Keep vanilla duration, modifiers, wait/start/update/stop/perform. Its original
+ -- completion may create inventory items or expand removal, so never queue it.
+ function a:complete() return false end
  return a
 end
 function T.action(actor,record,scope,options,native,rooms)
- local ticks=options.trashSeconds*50
- local a=T.presentation(actor,record.object,ticks)
- local started,closed=false,false
+ local broom=record.broom
+ local a=T.presentation(actor,record.object,broom)
+ local duration,adjust=a.getDuration,a.adjustMaxTime
+ local started,closed,minimum=false,false,nil
  local function valid(self)
   return self==a and self.character==actor and not closed and T.allowed(actor,record,scope,native,rooms)
    and native.optionsValid(options) and native.near(actor,record.square)
+   and self.trashObject==record.object and self.trashBroom==broom
+   and (not broom or T.broom(broom) and native.carried(actor,broom) and native.hand(actor)==broom)
  end
  function a:isValid() return valid(self) end
  function a:serverStart()
   if started or not valid(self) then return false end
+  -- Same owned vanilla callbacks as NetTimedAction.getDuration; 20 ms per native
+  -- action tick is the installed engine conversion, not a gameplay duration.
+  local adjusted=adjust(self,duration(self))
+  if type(adjusted)~='number' or adjusted~=adjusted or adjusted<=0 or adjusted>6000 then return false end
+  minimum=math.floor(adjusted*20) -- native Action.setTimeData stores whole milliseconds
   started=native.now();return true
  end
  function a:complete()
   if not started or not valid(self) then return false end
   local elapsed=native.now()-started
   local progress=native.localAuthority and self:getJobDelta() or self.netAction and self.netAction:getProgress()
-  if elapsed<ticks*20 or elapsed>120000 or progress~=1 then return false end
+  -- SP's owned native queue accounts for game-speed acceleration. Its completed
+  -- native progress is authoritative; a wall-clock minimum would break it.
+  if elapsed<0 or elapsed>120000 or progress~=1 or not native.localAuthority and elapsed<minimum then return false end
   closed=true -- latch before native mutation, including callbacks/reentry/errors
   local result=record.square:transmitRemoveItemFromSquare(record.object,false)
   return type(result)=='number' and result>=0 and not member(record.square,record.object)

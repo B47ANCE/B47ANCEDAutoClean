@@ -29,7 +29,7 @@ def main():
         assert (ROOT / 'WORKSHOP_ID.txt').read_text().strip() == str(item)
     report = json.loads((ROOT / 'dist/validation.json').read_text(encoding='utf-8'))
     assert report['result'] == 'PASS OFFLINE' and report['projectVersionObserved'] == version
-    assert report['offlineScenarioGroups'] >= 165 and report['trashScenarioGroups'] >= 21 and report['versionGate'] == 'PASS'
+    assert report['offlineScenarioGroups'] >= 179 and report['trashScenarioGroups'] >= 35 and report['versionGate'] == 'PASS'
     for relative, digest in report['productionSources'].items():
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == digest
     provider = ROOT.parent / 'B47ANCEDQuartermaster'

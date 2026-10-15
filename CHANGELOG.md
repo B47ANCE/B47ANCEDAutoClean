@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.0-dev.1] - 2026-10-15
+
+- MINOR: use vanilla ground-cover pickup timing and optional broom clearing timing/presentation; fetch an eligible broom through Quartermaster when available, otherwise pick up by hand.
+- Remove the custom trash pickup duration option. Legacy values are ignored; native durations and actor modifiers apply. Preserve exact authority, sender/reconstruction, timing, scope and single-object removal guards.
+- 179 scenario/compatibility checks PASS offline, including 35 trash/broom scenarios with actual native Lua duration/modifier/presentation callbacks and guarded reconstruction. Actual SP and dedicated G7 NOT TESTED / BLOCKED, stable G8 BLOCKED. Preserved older package still fails the full artifact-version gate. No package/deployment/publication.
+
 ## [0.3.0-dev.1] - 2026-10-15
 
 - Compatible MINOR: add guarded cleanup of verified vanilla decorative trash objects to building and selected-area tasks; dropped inventory items remain untouched.

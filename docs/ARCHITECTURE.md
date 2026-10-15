@@ -1,6 +1,6 @@
 # Ownership and extraction
 
-Project Version: 0.3.0-dev.1
+Project Version: 0.4.0-dev.1
 
 B47ANCEDAutoClean is a separate runtime mod with required dependencies
 B47ANCEDQuartermaster and B47ANCEDRooms. The user explicitly requires
@@ -59,12 +59,12 @@ BLOCKED. Static/offline source evidence does not certify Linux or game behavior.
 Clean Area uses the Rooms Editor/Draft controls through an Auto Clean subclass. A new transient Auto Clean AreaScope validates plain bounded geometry on authority, retains exact cleaning membership, and separates existing building logistics from selected cleaning targets. No Rooms or Quartermaster source changes are needed. See CLEAN_AREA.md for lifetime, trust boundaries, configuration and tests.
 
 Ground trash uses a separate guarded timed phase before stain supply fetching.
-Auto Clean owns RemoveTrashObjects and TrashPickupSeconds server sandbox options;
+Auto Clean owns the RemoveTrashObjects server sandbox option;
 Rooms settings and registries stay unchanged. Survey admits 77 exact vanilla
 trash sprites only after plain-object, no-container, no-grid and empty-mod-data
 checks. Dropped inventory items are excluded. The authority retains exact
 object/square/sprite/chunk references, checks cleaning membership and permissions
-again at completion, requires native progress and measured time, and removes
+again at completion, requires completed native progress and authority timing, and removes
 one object with transmitRemoveItemFromSquare(object,false). Clients receive
 presentation data only, and native class reconstruction retains server guards.
 No inventory items are created, collected or destroyed by the trash phase.
@@ -72,3 +72,20 @@ Unknown props fail closed. Native observer/save behavior remains a runtime gate.
 See TRASH_OBJECTS.md for settings, API evidence, limitations and current validation;
 CLEAN_AREA.md is frozen 0.2.0-dev.1 historical area evidence, whose selection and
 scope behavior is retained and re-exercised in the current offline regression.
+
+Trash.lua now instantiates vanilla ISPickUpGroundCoverItem or ISClearAshes for
+optional broom use. It retains their getDuration, adjustMaxTime and presentation
+callbacks and replaces completion with exact guarded removal. Pickup rewards and
+multi-tile clearing are excluded. The server minimum is derived from the owned
+vanilla callbacks with the inspected native conversion; SP uses completed progress
+of its exact native queue so accelerated game speed remains supported. No custom
+pickup-time setting remains; old TrashPickupSeconds values are ignored.
+
+Survey chooses an eligible Base.Broom or Base.Broom_Twig from carried supplies or
+allowed Quartermaster storage. Optional broom fetching/equipping precedes trash.
+No broom means native pickup; a selected broom that changes mid-job cancels safely.
+The existing exact resource claims and transfer guards cover the broom. A shared
+stain-tool/broom record is claimed, fetched and returned once. Expected hand state
+tracks intentional broom/stain-tool transitions; completion restores the original
+primary hand and returns borrowed equipment under existing Rooms policy. No new
+save schema, dependency API or client-owned gameplay state is introduced.
