@@ -110,6 +110,7 @@ local function fixture(carried)
   a.netAction={getProgress=function() return a.progress or 0 end};assert(a:serverStart())
   local challenge=self.messages[#self.messages].args.challenge
   assert(self.transport.command(Server.module,'confirm',self.actor,{protocol=1,operation=self.id,phase=phase,grant=offer.grant,challenge=challenge}))
+  if phase=='trash' then NOW=NOW+a.maxTime*20 end -- measured authority time after start/confirmation
   a.progress=1;local result=a:complete();self.lastAction=a;return result
  end
  function f:run(limit)

@@ -1,0 +1,18 @@
+VERSION = 1,
+option B47ANCEDAutoClean.RemoveTrashObjects
+{
+    type = boolean,
+    default = true,
+    page = B47ANCEDAutoClean,
+    translation = B47ANCEDAutoClean_RemoveTrashObjects,
+}
+
+option B47ANCEDAutoClean.TrashPickupSeconds
+{
+    type = integer,
+    min = 1,
+    max = 10,
+    default = 2,
+    page = B47ANCEDAutoClean,
+    translation = B47ANCEDAutoClean_TrashPickupSeconds,
+}

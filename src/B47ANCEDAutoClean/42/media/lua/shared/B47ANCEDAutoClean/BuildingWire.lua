@@ -67,6 +67,17 @@ local function presentation(rooms,localJob,localNative)
  require 'TimedActions/ISUnequipAction'
  local function idle(actor) return #ISTimedActionQueue.getTimedActionQueue(actor).queue==0 end
  local function resolve(actor,view,phase)
+  if phase=='trash' then
+   if type(view)~='table' or type(view.position)~='table' or type(view.index)~='number' or view.index%1~=0
+    or type(view.ticks)~='number' or view.ticks%50~=0 or view.ticks<50 or view.ticks>500 then return nil end
+   local p=view.position;local sq=getCell():getGridSquare(p.x,p.y,p.z)
+   if not sq or view.index<0 or view.index>=sq:getObjects():size() then return nil end
+   local object=sq:getObjects():get(view.index)
+   local trash=require 'B47ANCEDAutoClean/Trash'
+   local record=trash.capture(object,sq)
+   if not record or record.name~=view.sprite then return nil end
+   return trash.presentation(actor,object,view.ticks) -- client never receives a removal callback
+  end
   if phase~='fetch' and phase~='return' and phase~='equip' and phase~='unequip' then return nil end
   if type(view)~='table' or type(view.item)~='number' then return nil end
   local item=actor:getInventory():getItemWithID(view.item)
@@ -120,6 +131,7 @@ local function presentation(rooms,localJob,localNative)
   active[actor]=nil
   if actor.setHaloNote then
    local message=getText('UI_B47Rooms_CleaningSummary',state.actions or 0,state.skipped or 0,state.retained or 0)
+   message=message..' '..getText('UI_B47AutoClean_TrashSummary',state.trashRemoved or 0,state.trashSkipped or 0)
    if state.status~='done' and state.status~='partial' then
     local keys={missingSupplies='CleaningMissingSupplies',insufficientCapacity='CleaningInsufficientCapacity',waterUnavailable='CleaningWaterUnavailable',unsupportedEquipment='CleaningUnsupportedEquipment'}
     message=getText('UI_B47Rooms_CleaningStopped',getText('UI_B47Rooms_'..(keys[state.reason] or keys[state.status] or 'CleaningChanged'))) ..' '..message

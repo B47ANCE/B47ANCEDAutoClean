@@ -3,10 +3,6 @@
   "canonical": "VERSION",
   "mirrors": [
     {
-      "path": "docs/CLEAN_AREA.md",
-      "pattern": "^Project Version: (?P<version>\\S+)$"
-    },
-    {
       "path": "docs/WORKSHOP_DESCRIPTION.md",
       "pattern": "^Separate Clean Building workflow for Build 42.21.0. Version (?P<version>[^ ]+)\\.$"
     },
@@ -28,6 +24,10 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "docs/TRASH_OBJECTS.md",
       "pattern": "^Project Version: (?P<version>\\S+)$"
     }
   ],
@@ -69,6 +69,10 @@
     {
       "reference": "docs/WORKSHOP_PREPARATION.md; docs/ITERATION_REPORT.md; docs/EXTRACTION_PROVENANCE.json; dist/current/B47ANCEDAutoClean-0.1.0-dev.1.zip and checksum",
       "reason": "Published 0.1.0-dev.1 extraction/distribution evidence preserved unchanged. The stale current artifact deliberately blocks release validation until separately authorized packaging reconciliation."
+    },
+    {
+      "reference": "docs/CLEAN_AREA.md; dist/clean-area-development-receipt.json",
+      "reason": "Frozen 0.2.0-dev.1 area implementation/144-check evidence. It remains source history, not current trash validation."
     }
   ]
 }

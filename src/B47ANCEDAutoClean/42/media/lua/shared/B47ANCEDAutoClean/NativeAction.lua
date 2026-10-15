@@ -32,5 +32,5 @@ function A.stamp(action,class,operation,phase,grant)
     return action
 end
 function A.token(s) return type(s)=='string' and #s>0 and #s<=80 and s:match('^[%w%-]+$')~=nil end
-function A.phase(s) return s=='bleach' or s=='water' or s=='clean' or s=='fetch' or s=='equip' or s=='return' or s=='unequip' end
+function A.phase(s) return s=='bleach' or s=='water' or s=='clean' or s=='fetch' or s=='equip' or s=='return' or s=='unequip' or s=='trash' end
 return A

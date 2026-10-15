@@ -7,5 +7,6 @@
   "UI_B47AutoClean_SelectionHelp": "Drag a rectangle, or paint/erase tiles.",
   "UI_B47AutoClean_SelectionHelp2": "Add other floors; undo or clear to revise.",
   "UI_B47AutoClean_SelectionGuard": "Only selected, permitted footprints can be cleaned.",
-  "UI_B47AutoClean_SelectionLogistics": "Current building supplies remain available."
+  "UI_B47AutoClean_SelectionLogistics": "Current building supplies remain available.",
+  "UI_B47AutoClean_TrashSummary": "Trash objects removed: %1. Trash objects skipped: %2."
 }

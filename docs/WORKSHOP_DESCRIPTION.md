@@ -1,12 +1,13 @@
 # B47ANCE'd Auto Clean
 
 ## Overview
-Separate Clean Building workflow for Build 42.21.0. Version 0.2.0-dev.1.
+Separate Clean Building workflow for Build 42.21.0. Version 0.3.0-dev.1.
 MP testing build - dedicated multiplayer NOT TESTED
 
 ## Features
 - Choose Clean Building to collect suitable supplies from Quartermaster configured storage and clean eligible targets throughout the selected building.
 - Choose Clean Area to preview a rectangle or painted selection with Rooms controls, add explicit floors, and edit with erase or undo/redo. Nothing starts until Start Cleaning is selected. Cancelling the selection starts no task and saves no room.
+- Remove supported vanilla decorative ground trash objects before stain cleaning. Dropped inventory items, containers, interactive props and unknown sprites are untouched. Trash-only cleanup needs no cleaning supplies; missing stain supplies leave a partial result after trash cleanup.
 - Default preparation adds 10 mL bleach first, then fills remaining bucket capacity with water.
 - Uses guarded native timed actions, supply borrowing and return, and Rooms permission checks.
 - Lua-only implementation with server authority in multiplayer and exact local-player binding in single-player.
@@ -14,14 +15,14 @@ MP testing build - dedicated multiplayer NOT TESTED
 ## Compatibility & Requirements
 Requires B47ANCEDQuartermaster SupplyAPI 1 (Quartermaster 0.11.0-dev.1 or compatible) and B47ANCEDRooms API 1 with cleaning capability 1. Enable all three mods on clients and server. Quartermaster alone no longer adds Clean Building.
 Quartermaster Workshop item: 3807217050. Rooms Workshop item: 3820077442.
-132 primary Auto Clean scenarios plus 12 published-Rooms selector compatibility checks, including selected-area and selector checks, passed offline against installed Build 42.21 evidence and simulated engine services. Actual SP, split-screen and dedicated multiplayer acceptance are NOT TESTED.
+165 Auto Clean scenario/compatibility checks, including 21 trash-object scenarios and 12 published-Rooms selector compatibility checks, passed offline against installed Build 42.21 evidence and simulated engine services. Actual SP, split-screen and dedicated multiplayer acceptance are NOT TESTED.
 
 ## Configuration
-Rooms owns cleaning sandbox settings and permissions. Server sandbox settings control shared gameplay. Quartermaster owns configured supply storage. Configure suitable storage and make supplies available before starting Clean Building.
+Rooms owns cleaning scope settings and permissions. Auto Clean sandbox settings enable ground trash removal and set pickup time (default 2 seconds per object, range 1 to 10). Server sandbox settings control shared gameplay. Quartermaster owns configured supply storage. Configure suitable storage and make supplies available for stain cleaning. The bleach-first recipe is unchanged.
 
 ## Source Code & Development
 GitHub: https://github.com/B47ANCE/B47ANCEDAutoClean
-Development version 0.2.0-dev.1. This source iteration has not been packaged, deployed or published. Workshop distribution is for testing; G7 remains NOT TESTED / BLOCKED and stable G8 remains BLOCKED.
+Development version 0.3.0-dev.1. This source iteration has not been packaged, deployed or published. Workshop distribution is for testing; G7 remains NOT TESTED / BLOCKED and stable G8 remains BLOCKED.
 
 ## Known Issues
 The conservative native footprint guard can skip unsupported targets, including all targets in some layouts. Ashes, graffiti and arbitrary dirt are unsupported. Native pathfinding, fluids, action reconstruction, observers, cancellation, save/reload, reconnect and restart behavior still require in-game testing. Do not treat offline tests as runtime verification. Update Quartermaster and Auto Clean together when moving from embedded cleaning.

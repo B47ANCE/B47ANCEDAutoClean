@@ -86,6 +86,7 @@ local function setup(carried)
  function f:advance(a)
   if a.Type==ISWalkToTimedAction.Type then self.actor.stand=a.location;a:perform();return end
   assert(a:isValid(),a.Type)
+  if a.trashObject then NOW=NOW+a.maxTime*20 end -- simulated elapsed native pickup duration
   a.action.delta=0.5;a:update() -- incremental native mutation stays inside Poc/Job
   a.action.delta=1
   assert(a:complete(),a.Type)

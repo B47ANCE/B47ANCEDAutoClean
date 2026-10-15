@@ -32,13 +32,14 @@ function B.new(rooms,native)
    if ok and carried then j.retained=j.retained+1
    elseif not ok or not observed or not returned then j.unaccounted=j.unaccounted+1 end
   end end
-  j.supplies=nil;j.borrowed=nil;j.targets=nil;j.sources=nil;j.record=nil;j.water=nil;j.options=nil;j.originalHand=nil
+  j.supplies=nil;j.borrowed=nil;j.targets=nil;j.trash=nil;j.sources=nil;j.record=nil;j.water=nil;j.options=nil;j.originalHand=nil
   history[#history+1]=j.id;if #history>32 then jobs[table.remove(history,1)]=nil end
   return false
  end
  local function valid(j)
   return not j.closed and native.actorValid(j.actor) and native.now()-j.time<1800000
    and rooms.validateCleaningBuilding(j.actor,j.scope).status=='ok'
+   and (not j.options or not native.optionsValid or native.optionsValid(j.options))
  end
  function api.begin(actor,request,selection)
   if not native.server() or not native.actorValid(actor) then return {status='invalid'} end
@@ -59,7 +60,7 @@ function B.new(rooms,native)
   if scope.status~='waiting' then return scope end
   local id=native.id()
   local j={id=id,actor=actor,scope=scope.scope,request=request,time=native.now(),status='ready',phase='waiting',
-   actions=0,alreadyClean=0,skipped=0,skipReasons={},borrowed={},returned=0,retained=0,originalHand=native.hand(actor)}
+   actions=0,trashRemoved=0,trashSkipped=0,alreadyClean=0,skipped=0,skipReasons={},borrowed={},returned=0,retained=0,originalHand=native.hand(actor)}
   jobs[id]=j;owners[actor]=j
   remember(actor,request,id)
   return {status='waiting',operation=id}
@@ -71,14 +72,21 @@ function B.new(rooms,native)
   local scope=rooms.readCleaningBuilding(j.actor,j.scope)
   if scope.status=='waiting' then return false end
   if scope.status~='ok' then close(j,'cancelled',scope.status);return false end
-  if not j.survey then j.tiles=scope.tiles;j.options=scope.options;j.survey=native.survey(j.actor,j.tiles,j.options,j.scope) end
+  if not j.survey then
+   j.tiles=scope.tiles;j.options=native.cleaningOptions and native.cleaningOptions(scope.options) or scope.options
+   j.survey=native.survey(j.actor,j.tiles,j.options,j.scope)
+  end
   local result=j.survey.step()
   if result.status=='waiting' then return false end
   if result.status~='ok' then close(j,'cancelled',result.status);return false end
   j.targets=result.targets;j.index=1;j.total=#j.targets
-  if #j.targets==0 then close(j,'done','alreadyClean');return false end
-  j.supplies=result.supplies;j.sources=result.water;j.survey=nil;j.stage='fetch';j.fetchIndex=1
-  if not j.supplies then close(j,'cancelled','missingSupplies');return false end
+  j.trash=result.trash or {};j.trashIndex=1;j.cleanFailure=result.cleanFailure
+  if #j.targets==0 and #j.trash==0 then close(j,'done','alreadyClean');return false end
+  j.supplies=result.supplies;j.sources=result.water;j.survey=nil;j.stage='trash';j.fetchIndex=1
+  if not j.supplies then
+   if #j.trash>0 then return true end
+   close(j,'cancelled','missingSupplies');return false
+  end
   for _,record in pairs(j.supplies) do if claims[record.item] then close(j,'cancelled','supplyBusy');return false end end
   for _,record in pairs(j.supplies) do claims[record.item]=j end
   j.poc=Poc.new(native.cleanPort(j.actor,j.scope,j.options))
@@ -98,6 +106,21 @@ function B.new(rooms,native)
   if not valid(j) then close(j,'cancelled','scopeChanged');return api.status(actor,id) end
   if j.action then return {status='waiting',operation=id} end
   local supplies=j.supplies
+  if j.stage=='trash' then
+   for _=1,32 do
+    local record=j.trash[j.trashIndex]
+    if not record then
+     if #j.targets==0 or j.cleanFailure then
+      if j.cleanFailure then j.skipped=#j.targets end
+      close(j,(j.skipped>0 or j.trashSkipped>0) and 'partial' or 'done',j.cleanFailure or 'complete');return api.status(actor,id)
+     end
+     j.stage='fetch';break
+    end
+    if native.trashSafe(actor,j.scope,record) then return ready(j,'trash',record,record.square) end
+    j.trashSkipped=j.trashSkipped+1;j.trashIndex=j.trashIndex+1
+   end
+   if j.stage=='trash' then return {status='waiting',operation=id} end
+  end
   if j.stage=='fetch' then
    local order={'bucket','bleach','tool'}
    while j.fetchIndex<=#order do
@@ -157,7 +180,7 @@ function B.new(rooms,native)
    j.restoreDone=true
    for _=1,3 do
     local record=j.borrowed[j.returnIndex]
-    if not record then close(j,j.skipped>0 and 'partial' or 'done',j.skipped>0 and 'targetsSkipped' or 'complete');return api.status(actor,id) end
+    if not record then close(j,(j.skipped>0 or j.trashSkipped>0) and 'partial' or 'done',(j.skipped>0 or j.trashSkipped>0) and 'targetsSkipped' or 'complete');return api.status(actor,id) end
     if not j.options.returns or not native.carried(actor,record.item) or not native.sourceValid(actor,record,'deposit') then
      j.returnIndex=j.returnIndex-1
     else return ready(j,'return',record,record.square) end
@@ -168,21 +191,21 @@ function B.new(rooms,native)
  function api.status(actor,id)
   local j=find(actor,id);if not j then return nil,'notOwned' end
   return {operation=id,id=id,status=j.status,phase=j.phase,reason=j.reason,total=j.total or 0,actions=j.actions,
-   alreadyClean=j.alreadyClean,skipped=j.skipped,returned=j.returned,retained=j.retained,unaccounted=j.unaccounted or 0,closed=j.closed==true}
+   trashRemoved=j.trashRemoved,trashSkipped=j.trashSkipped,alreadyClean=j.alreadyClean,skipped=j.skipped,returned=j.returned,retained=j.retained,unaccounted=j.unaccounted or 0,closed=j.closed==true}
  end
  function api.next(actor,id)
   local j=find(actor,id)
   if not j or not valid(j) or j.action or j.phase=='waiting' then return nil,'notReady' end
   local phase=j.phase;local action
   if phase=='bleach' or phase=='water' or phase=='clean' then action=j.poc.next(actor,j.child)
-  else action=native.action(actor,phase,j.record,j.options) end
+  else action=native.action(actor,phase,j.record,j.options,j.scope) end
   if not action then close(j,'cancelled','constructionFailed');return nil,'constructionFailed' end
   j.action=action
   local start,complete,update,transfer=action.serverStart,action.complete,action.update,action.transferFluid
   local stop,forceCancel=action.stop,action.forceCancel
   local started,completing=false,false
   local function check(self)
-   return self==j.action and valid(j) and (phase=='bleach' or phase=='water' or phase=='clean' or native.actionValid(actor,phase,j.record,self,j.options))
+   return self==j.action and valid(j) and (phase=='bleach' or phase=='water' or phase=='clean' or native.actionValid(actor,phase,j.record,self,j.options,j.scope))
   end
   function action:serverStart()
    if started or not check(self) then return false end
@@ -198,7 +221,8 @@ function B.new(rooms,native)
    j.inFlight=false
    completing=false
    if not ok or result~=true then close(j,'uncertain','nativeOutcomeUncertain');return false end
-   if phase=='fetch' then
+   if phase=='trash' then j.trashRemoved=j.trashRemoved+1;j.trashIndex=j.trashIndex+1
+   elseif phase=='fetch' then
     if not native.carried(actor,j.record.item) then close(j,'uncertain','fetchNotObserved');return false end
     j.borrowed[#j.borrowed+1]=j.record;j.fetchIndex=j.fetchIndex+1
    elseif phase=='return' then

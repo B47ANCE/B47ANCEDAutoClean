@@ -1,0 +1,7 @@
+{
+  "Sandbox_B47ANCEDAutoClean": "B47ANCE'd Auto Clean",
+  "Sandbox_B47ANCEDAutoClean_RemoveTrashObjects": "Remove Ground Trash Objects",
+  "Sandbox_B47ANCEDAutoClean_RemoveTrashObjects_tooltip": "Remove supported vanilla decorative trash objects during Clean Building and Clean Area. Dropped inventory items, containers and other props are untouched. Changing this setting cancels active jobs.",
+  "Sandbox_B47ANCEDAutoClean_TrashPickupSeconds": "Trash Pickup Time (Seconds)",
+  "Sandbox_B47ANCEDAutoClean_TrashPickupSeconds_tooltip": "Time for each supported trash object, from 1 to 10 seconds. Default 2. Server authoritative in multiplayer. Changing this setting cancels active jobs."
+}

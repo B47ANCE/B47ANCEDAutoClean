@@ -1,6 +1,8 @@
 -- Exact native references on the server. Client coordinates are presentation only.
 local NativePort=require 'B47ANCEDAutoClean/NativePort'
 local Supplies=require 'B47ANCEDQuartermaster/SupplyAPI'
+local Options=require 'B47ANCEDAutoClean/Options'
+local Trash=require 'B47ANCEDAutoClean/Trash'
 local N={}
 local function listContains(container,item) return container and item and container:getItemWithID(item:getID())==item and item:getContainer()==container end
 local function point(s) return {x=s:getX(),y=s:getY(),z=s:getZ()} end
@@ -19,6 +21,8 @@ function N.new(rooms,options)
  end
  rooms=require('B47ANCEDAutoClean/AreaScope').new(rooms,p)
  p.scopes=rooms
+ p.cleaningOptions=Options.read;p.optionsValid=Options.matches
+ function p.trashSafe(actor,scope,record) return Trash.allowed(actor,record,scope,p,rooms) end
  function p.near(actor,square)
   local a=actor:getCurrentSquare()
   return a and square and a:getZ()==square:getZ() and math.max(math.abs(a:getX()-square:getX()),math.abs(a:getY()-square:getY()))<=1
@@ -52,7 +56,11 @@ function N.new(rooms,options)
    and item:getType()~='CandleLit' and item:getType()~='Lantern_HurricaneLit' then return 'tool' end
  end
  function p.survey(actor,tiles,options,scope)
-  local s={tile=1,object=0,ci=0,item=0,targets={},water={},candidates={bucket={},bleach={},tool={}},seen={},work=0}
+  local s={tile=1,object=0,ci=0,item=0,targets={},trash={},water={},candidates={bucket={},bleach={},tool={}},seen={},work=0}
+  local function missing(reason)
+   if #s.trash>0 then return {status='ok',targets=s.targets,trash=s.trash,water=s.water,cleanFailure=reason} end
+   return {status=reason}
+  end
   local function candidate(item,record)
    local kind=role(item);if not kind or s.seen[item] then return end
    s.seen[item]=true;record.item=item;record.role=kind
@@ -79,6 +87,10 @@ function N.new(rooms,options)
       s.obj=s.objects:get(s.object)
       if s.ci==0 and not s.waterSeen then
        s.waterSeen=true
+       if options.trashEnabled and (not scope or rooms.cleaningTargetTile(actor,scope,s.square:getX(),s.square:getY(),s.square:getZ())) then
+        local record=Trash.capture(s.obj,s.square)
+        if record then s.trash[#s.trash+1]=record end
+       end
        local f=s.obj:getFluidContainer()
        if f and f:isPureFluid(Fluid.Water) and f:getAmount()>0 and f:getAmount()<10000 and s.obj:getFluidAmount()==f:getAmount()
         and not s.obj:getUsesExternalWaterSource() then s.water[#s.water+1]=s.obj end
@@ -101,7 +113,7 @@ function N.new(rooms,options)
     else
      local tile=tiles[s.tile]
      if not tile then
-      if #s.targets==0 then return {status='ok',targets={},water=s.water} end
+      if #s.targets==0 then return {status='ok',targets={},trash=s.trash,water=s.water} end
       local supplies={}
       for _,kind in ipairs({'bucket','bleach','tool'}) do
        table.sort(s.candidates[kind],function(a,b)
@@ -111,13 +123,13 @@ function N.new(rooms,options)
         local function distance(r) return r.square and math.abs(pos:getX()-r.square:getX())+math.abs(pos:getY()-r.square:getY())+10*math.abs(pos:getZ()-r.square:getZ()) or 0 end
         if distance(a)~=distance(b) then return distance(a)<distance(b) end;return a.item:getID()<b.item:getID()
        end)
-       supplies[kind]=s.candidates[kind][1];if not supplies[kind] then return {status='missingSupplies'} end
+       supplies[kind]=s.candidates[kind][1];if not supplies[kind] then return missing('missingSupplies') end
       end
-      if supplies.tool.item:isRequiresEquippedBothHands() and actor:getSecondaryHandItem() and actor:getSecondaryHandItem()~=supplies.tool.item then return {status='unsupportedEquipment'} end
+      if supplies.tool.item:isRequiresEquippedBothHands() and actor:getSecondaryHandItem() and actor:getSecondaryHandItem()~=supplies.tool.item then return missing('unsupportedEquipment') end
       local needed=10-supplies.bucket.item:getFluidContainer():getAmount()
       for _,r in pairs(supplies) do if not r.carried then needed=needed+r.item:getActualWeight() end end
-      if actor:getFreeInventoryCapacity()<needed then return {status='insufficientCapacity'} end
-      return {status='ok',targets=s.targets,supplies=supplies,water=s.water}
+      if actor:getFreeInventoryCapacity()<needed then return missing('insufficientCapacity') end
+      return {status='ok',targets=s.targets,trash=s.trash,supplies=supplies,water=s.water}
      end
      local sq=getCell():getGridSquare(tile.x,tile.y,tile.z);if not sq then return {status='buildingUnloaded'} end
      s.square=sq;s.objects=sq:getObjects();s.object=0;s.ci=0;s.waterSeen=false
@@ -161,7 +173,8 @@ function N.new(rooms,options)
   end end end
   return true
  end
- function p.action(actor,phase,record,options)
+ function p.action(actor,phase,record,options,scope)
+  if phase=='trash' then return Trash.action(actor,record,scope,options,p,rooms) end
   local a
   if phase=='equip' then a=ISEquipWeaponAction:new(actor,record.item,50,true,false,false)
   elseif phase=='unequip' then a=ISUnequipAction:new(actor,record.item,50)
@@ -170,7 +183,8 @@ function N.new(rooms,options)
   end
   return a
  end
- function p.actionValid(actor,phase,r,a,options)
+ function p.actionValid(actor,phase,r,a,options,scope)
+  if phase=='trash' then return a.trashObject==r.object and a.character==actor and p.trashSafe(actor,scope,r) and p.near(actor,r.square) end
   if (not cleanItem(r.item) and not r.restore) or r.item:getIsCraftingConsumed() or a.item~=r.item or a.character~=actor then return false end
   if phase=='fetch' or phase=='return' then
    if phase=='fetch' and (role(r.item)~=r.role or r.role=='bleach' and r.item:getFluidContainer():getAmount()<options.bleachML/1000+0.001) then return false end
@@ -190,6 +204,7 @@ function N.new(rooms,options)
   return phase=='unequip' and a:isValid()
  end
  function p.describe(a,phase)
+  if phase=='trash' then return {position=point(a.trashObject:getSquare()),index=a.trashObject:getObjectIndex(),sprite=a.trashObject:getSprite():getName(),ticks=a.maxTime} end
   if phase=='equip' or phase=='unequip' then return {item=a.item:getID(),ticks=a.maxTime} end
   if phase=='fetch' or phase=='return' then
    local container=phase=='fetch' and a.srcContainer or a.destContainer

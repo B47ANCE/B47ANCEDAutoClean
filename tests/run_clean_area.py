@@ -15,9 +15,12 @@ args=p.parse_args()
 sys.argv=[str(ROOT/'tests/run_auto_clean_single_player.py'),'--game',str(args.game),'--rooms',str(args.rooms)]
 base=runpy.run_path(str(ROOT/'tests/run_auto_clean_single_player.py'))
 lua=base['base']['lua']
+from audit_trash_api import audit
+trash_evidence=audit(args.game)
 lua.execute("package.path=.....'/src/B47ANCEDRooms/42/media/lua/client/?.lua;'..package.path",args.rooms.as_posix())
 lua.execute("package.path=.....'/src/B47ANCEDAutoClean/42/media/lua/client/?.lua;'..package.path",ROOT.as_posix())
 area=lua.execute((ROOT/'tests/test_clean_area.lua').read_text(encoding='utf-8'))
+trash=lua.execute((ROOT/'tests/test_trash.lua').read_text(encoding='utf-8'))
 selector=lua.execute((ROOT/'tests/test_clean_area_selector.lua').read_text(encoding='utf-8'))
 published=Path.home()/'Tools/SteamCMD/steamapps/workshop/content/108600/3820077442/mods/B47ANCEDRooms/42'
 compat=0
@@ -28,7 +31,8 @@ if (published/'media/lua/client/B47ANCEDRooms/Editor.lua').is_file():
     lua.globals().ROOMS_EDITOR_COMPAT_PATH=(published/'media/lua/client/B47ANCEDRooms/Editor.lua').as_posix()
     compat=lua.execute((ROOT/'tests/test_clean_area_selector.lua').read_text(encoding='utf-8'))
     lua.globals().ROOMS_EDITOR_COMPAT_PATH=None
-result={**base['result'],'cleanAreaScenarioGroups':area,
+result={**base['result'],'cleanAreaScenarioGroups':area,'trashScenarioGroups':trash,
+        'trashApiEvidence':trash_evidence,
         'selectorScenarioGroups':selector,
         'publishedRoomsSelectorScenarioGroups':compat,
         'publishedRoomsSelectorSourceSha256':hashlib.sha256((published/'media/lua/client/B47ANCEDRooms/Editor.lua').read_bytes()).hexdigest() if compat else None,

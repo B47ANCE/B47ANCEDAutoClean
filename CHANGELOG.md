@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0-dev.1] - 2026-10-15
+
+- Compatible MINOR: add guarded cleanup of verified vanilla decorative trash objects to building and selected-area tasks; dropped inventory items remain untouched.
+- Add authoritative Auto Clean sandbox controls for enabling trash removal and pickup time. Retain exact scope, permission, sender/reconstruction, timing, cancellation and one-time mutation guards.
+- 165 offline scenario/compatibility checks PASS, including 21 trash-object scenarios and installed API fingerprints. Actual SP and dedicated G7 NOT TESTED / BLOCKED, stable G8 BLOCKED. Preserved published 0.1.0-dev.1 artifacts still block release-version validation. No new package, deployment, game/server launch or publication.
+
 ## [0.2.0-dev.1] - 2026-10-15
 
 - Compatible MINOR: add Clean Area with a transient Rooms selector and explicit Start Cleaning confirmation.

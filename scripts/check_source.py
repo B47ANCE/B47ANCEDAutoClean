@@ -21,6 +21,11 @@ def validate():
     rooms_client=ROOT.parent/'B47ANCEDRooms/src/B47ANCEDRooms/42/media/lua/client'
     translations=SOURCE/'42/media/lua/shared/Translate'
     english=json.loads((translations/'EN/UI.json').read_text(encoding='utf-8'))
+    sandbox=json.loads((translations/'EN/Sandbox.json').read_text(encoding='utf-8'))
+    settings=(SOURCE/'42/media/sandbox-options.txt').read_text(encoding='utf-8')
+    names=re.findall(r'^option B47ANCEDAutoClean\.(\w+)',settings,re.M)
+    assert names==['RemoveTrashObjects','TrashPickupSeconds']
+    assert set(sandbox)=={'Sandbox_B47ANCEDAutoClean'}|{'Sandbox_B47ANCEDAutoClean_'+n+s for n in names for s in ['', '_tooltip']}
     used=set()
     for name,path in files.items():
         assert not path.is_symlink() and path.suffix.lower() not in {'.java','.class','.jar','.dll','.exe','.py'}
@@ -41,6 +46,7 @@ def validate():
     assert {p.name for p in translations.iterdir() if p.is_dir()}==expected_languages
     for language in expected_languages:
         assert json.loads((translations/language/'UI.json').read_text(encoding='utf-8'))==english
+        assert json.loads((translations/language/'Sandbox.json').read_text(encoding='utf-8'))==sandbox
     print(f'PASS source inventory: {len(files)} files, Lua-only, exact dependencies/public SupplyAPI boundary; {len(english)} keys with explicit English fallback in {len(expected_languages)} languages')
     return files
 
