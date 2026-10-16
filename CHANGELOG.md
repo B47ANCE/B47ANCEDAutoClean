@@ -3,6 +3,7 @@
 ## [0.5.1-dev.1] - 2026-10-15
 
 - Publication preparation: explicitly authorized Workshop MP testing update with current feature set and thumbnail. Preserve the old ZIP/checksum with verified hashes in dist/history/published-0.1.0-dev.1 and validate the new package separately. Earlier source-iteration failures below remain historical; see docs/PUBLICATION_0.5.1.md for current checks.
+- Steam rejected the original preview upload with Limit exceeded. Preserve the original PNG and failed staging; export a quality-95 full-resolution JPEG upload preview and bind both hashes in the publication manifest. Host-only packaging correction; no runtime behavior change.
 
 - Compatible PATCH: replace the project/Workshop source thumbnail with the user-supplied Auto Clean artwork. Preserve its original 1254 x 1254 PNG bytes; the in-game icon and poster remain unchanged.
 - PNG integrity and exact source/destination SHA-256 PASS offline (Pillow verification and byte comparison). `python scripts/check_source.py` and `git diff --check` PASS; `python tests/run_tests.py` passes 190 offline scenarios but exits 1 for the existing package-version gate. `python scripts/check_versions.py --root . --json` confirms current source mirrors and reports the two preserved older ZIP mismatches. No gameplay or authority changes. Actual SP/dedicated runtime NOT TESTED; G7/stable G8 BLOCKED. No packaging, deployment or Workshop upload.

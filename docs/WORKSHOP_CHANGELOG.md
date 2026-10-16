@@ -1,7 +1,7 @@
 Version 0.5.1-dev.1
 MP testing build - dedicated multiplayer NOT TESTED
 
-Use the supplied Auto Clean artwork as the project/Workshop source thumbnail, preserving the original PNG bytes. In-game icon and poster are unchanged. Use this artwork for the Workshop thumbnail.
+Use the supplied Auto Clean artwork for the Workshop thumbnail. Preserve the original PNG in source; export a full-resolution JPEG upload copy to fit Steam's preview limit. In-game icon and poster are unchanged.
 
 Add a second overhead bar for overall Clean Area/Clean Building progress while preserving vanilla's current-action bar. Show authoritative processed-target percentage and fetching/preparing/cleaning/returning phase; clear the widget when work ends. No gameplay or native timing changes. 190 scenarios passed offline, including 11 HUD cases; actual in-game visual and multiplayer acceptance NOT TESTED.
 

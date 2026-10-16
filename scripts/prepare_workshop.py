@@ -44,6 +44,21 @@ def main():
     assert {p.relative_to(stage).as_posix(): p.read_bytes()
             for p in stage.rglob('*') if p.is_file()} == {n: p.read_bytes() for n, p in files.items()}
     shutil.copyfile(ROOT / 'preview.png', output / 'preview.png')
+    preview = output / 'preview.png'
+    # SteamCMD rejects oversized preview files. Keep original art unchanged and
+    # export an upload-only format derivative at the original pixel dimensions.
+    if preview.stat().st_size >= 1_000_000:
+        from PIL import Image
+        with Image.open(preview) as image:
+            if image.mode == 'RGBA' and image.getextrema()[3] != (255, 255):
+                raise SystemExit('Transparent oversized thumbnail needs an explicit export decision')
+            preview = output / 'preview.jpg'
+            image.convert('RGB').save(preview, format='JPEG', quality=95,
+                                      subsampling=0, optimize=True)
+            with Image.open(preview) as exported:
+                assert exported.size == image.size
+                exported.verify()
+        assert preview.stat().st_size < 1_000_000, 'Upload thumbnail still exceeds preview limit'
     renderer = Path.home() / '.codex/b47anced-team/tools/Build-WorkshopDescription.py'
     spec = importlib.util.spec_from_file_location('workshop_renderer', renderer)
     module = importlib.util.module_from_spec(spec)
@@ -63,7 +78,7 @@ def main():
     def escape(text):
         return str(text).replace('\\', '\\\\').replace('"', '\\"').replace('\r\n', '\n').replace('\r', '\n')
     fields = dict(appid='108600', publishedfileid=str(item or 0),
-                  contentfolder=str(output / 'Contents'), previewfile=str(output / 'preview.png'),
+                  contentfolder=str(output / 'Contents'), previewfile=str(preview),
                   title="B47ANCE'd Auto Clean", description=description, changenote=note)
     # New-item approval is required before submitting the zero-ID candidate.
     vdf = '"workshopitem"\n{\n' + ''.join(f'    "{k}" "{escape(v)}"\n' for k, v in fields.items()) + '}\n'
@@ -74,6 +89,9 @@ def main():
                     new_item_approval_required=item is None, mod_id='B47ANCEDAutoClean',
                     app_id=108600, game_version='42.21.0', steam_build='25485521',
                     package_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),
+                    original_thumbnail_sha256=hashlib.sha256((ROOT / 'preview.png').read_bytes()).hexdigest(),
+                    upload_thumbnail=preview.name,
+                    upload_thumbnail_sha256=hashlib.sha256(preview.read_bytes()).hexdigest(),
                     source_sha256={n: hashlib.sha256(p.read_bytes()).hexdigest() for n, p in files.items()},
                     offline=f"{report['offlineScenarioGroups']} focused scenarios PASS",
                     validation_sha256=hashlib.sha256((ROOT / 'dist/validation.json').read_bytes()).hexdigest(),

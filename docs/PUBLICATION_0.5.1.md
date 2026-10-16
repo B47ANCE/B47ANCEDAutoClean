@@ -34,6 +34,14 @@ offline evidence, item identity and actual SteamCMD result. The original supplie
 3435f585ae145d9693fb20b1350850a8ced3d043d7df56c7eb710f8fb120de0b.
 Check actual upload and download receipts before claiming distribution success.
 
+The first upload failed with SteamCMD "Limit exceeded"; no successful distribution
+was claimed. Its staging, manifest and sanitized log remain preserved under the
+original candidate directory. The 1,443,440-byte original PNG remains unchanged.
+Preparation now exports a quality-95 JPEG at the same 1254 x 1254 dimensions for
+the upload preview, with no crop or resize. The manifest records original and
+upload hashes. Retry staging uses the separate `-retry1` suffix. Pillow is a host
+packaging dependency only and never ships as a runtime mod dependency.
+
 [TESTED: OFFLINE] Packaging, ZIP CRC/member/path/case/source parity, current and
 release version checks PASS. All 190 scenarios PASS, including native authority,
 sender/reconstruction, SP binding, area selection, trash/broom and overhead HUD

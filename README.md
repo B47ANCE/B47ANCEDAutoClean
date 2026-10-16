@@ -23,4 +23,6 @@ and [source provenance](docs/EXTRACTION_PROVENANCE.json). The project/Workshop t
 `preview.png` (1254 x 1254 PNG), copied unchanged on 2026-10-15. Its SHA-256 is
 `3435f585ae145d9693fb20b1350850a8ced3d043d7df56c7eb710f8fb120de0b`.
 The in-game icon and poster retain their verified default B47 artwork. The
-current Workshop candidate uses this exact thumbnail; the publication receipt records upload verification.
+Workshop candidate uses a full-resolution JPEG export of this artwork to fit
+Steam's preview limit; the original PNG remains unchanged. The publication
+receipt records both hashes and upload verification.
