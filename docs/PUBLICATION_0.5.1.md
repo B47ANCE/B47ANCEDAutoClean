@@ -58,3 +58,23 @@ unsupported dirt/ashes/graffiti, pathfinding, UI placement, synchronization,
 reconstruction, cancel/disconnect/rejoin, save/reload and restart acceptance
 remain explicit. Workshop distribution does not prove runtime correctness.
 No local deployment or game/server launch is part of publication.
+
+## Confirmed publication result
+
+[VERIFIED: distribution] SteamCMD confirmed `Committing update...Success.` for
+existing item 3820151540. Release source commit:
+`6d38fa08343faefdcaa5f70c0481a18ca045dfce` on the public feature branch. Later
+documentation-only commits record the outcome; they do not change the payload.
+Workshop download validation matches all 80 staged mod files and their SHA-256
+hashes exactly. Public signed-out page inspection confirms version 0.5.1-dev.1,
+the supplied thumbnail design, current description, testing label, and required
+Quartermaster 3807217050 / Rooms 3820077442 items. The existing identity and
+visibility were preserved. No stable release tag or main-branch merge was made.
+
+The verified Steam desktop client exited gracefully and restarted successfully;
+no forced termination, game/server launch or local mod deployment occurred.
+The successful candidate, authorization/release manifests, redacted SteamCMD
+logs, download/publication receipts, public-page snapshot and screenshot are
+retained locally under
+`dist/workshop-publish-0.5.1-dev.1-20261015-retry1`. The failed first candidate
+remains intact. Distribution success does not change the runtime gates above.
