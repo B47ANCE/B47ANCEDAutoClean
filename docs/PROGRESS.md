@@ -108,3 +108,11 @@ stable G8 remain BLOCKED. Verify both bars together during native actions,
 overhead labels/usernames, camera movement/zoom, UI scale, split-screen clipping,
 controller/mouse passthrough, cancellation, disconnect/rejoin and final supply
 returns in PZ. Offline draw calls cannot prove pixel placement or MP acceptance.
+
+## Authorized Workshop preparation, 2026-10-15
+
+The source-iteration gate failures above are historical observations. The prior
+published ZIP and checksum are now retained unchanged under
+`dist/history/published-0.1.0-dev.1`; the new current package is checked separately.
+See [current publication validation](PUBLICATION_0.5.1.md). This does not upgrade
+SP/dedicated evidence: actual runtime NOT TESTED; G7/stable G8 BLOCKED.

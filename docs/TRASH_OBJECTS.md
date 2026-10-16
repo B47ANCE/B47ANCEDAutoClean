@@ -44,8 +44,8 @@ timing conversion, 512-object survey bound, protocol/grant internals and
 
 [VERIFIED: source] Installed Project Zomboid 42.21.0, Steam build 25485521.
 Vanilla media/lua/shared/Foraging/forageSystem.lua spriteAffinities.trash identifies
-77 exact sprite names: d_trash_0–25, trash_01_0–12 and trash_01_16–53.
-The omitted trash_01_13–15 and unknown/custom sprites are excluded. Only plain
+77 exact sprite names: d_trash_0â€“25, trash_01_0â€“12 and trash_01_16â€“53.
+The omitted trash_01_13â€“15 and unknown/custom sprites are excluded. Only plain
 IsoObject objects with that sprite, zero containers, no sprite grid and empty mod
 data qualify. IsoWorldInventoryObject, named/special subclasses, interactive
 props, multi-sprite props and containers fail closed. This does not clear dropped
@@ -155,3 +155,11 @@ denied/edge/outside-selection tiles, multiple clients, cancel/disconnect/rejoin,
 map synchronization, save/reload and dedicated restart before runtime acceptance.
 Also test actual sweeping animation, hand/equipment replication, carried and
 borrowed broom variants, native modifiers/instant action and SP speed controls.
+
+## Authorized Workshop preparation, 2026-10-15
+
+The source-iteration gate failures above are historical observations. The prior
+published ZIP and checksum are now retained unchanged under
+`dist/history/published-0.1.0-dev.1`; the new current package is checked separately.
+See [current publication validation](PUBLICATION_0.5.1.md). This does not upgrade
+SP/dedicated evidence: actual runtime NOT TESTED; G7/stable G8 BLOCKED.

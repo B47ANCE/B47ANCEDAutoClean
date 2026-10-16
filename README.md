@@ -17,10 +17,10 @@ MP testing build - dedicated multiplayer NOT TESTED. Both Quartermaster (Worksho
 Run `python tests/run_tests.py` with adjacent Quartermaster and Rooms checkouts.
 The validator reads installed Build 42.21 evidence and never launches the game.
 Use `python scripts/check_versions.py --root .` for version mirrors. Explicit
-packaging is `python scripts/package.py`. Current 0.5.1-dev.1 source is not packaged, deployed or published; Workshop remains 0.1.0-dev.1. The preserved published ZIP in dist/current deliberately blocks the artifact-version gate until separately authorized packaging reconciliation.
+packaging is `python scripts/package.py`. Current 0.5.1-dev.1 source is selected for an explicitly authorized Workshop MP testing upload. The prior published 0.1.0-dev.1 ZIP and checksum are preserved unchanged in dist/history/published-0.1.0-dev.1; dist/current holds the new package. See [publication validation](docs/PUBLICATION_0.5.1.md). Local deployment is separate.
 See [ownership and migration](docs/ARCHITECTURE.md), [historical initial extraction evidence](docs/ITERATION_REPORT.md)
 and [source provenance](docs/EXTRACTION_PROVENANCE.json). The project/Workshop thumbnail is the user-supplied Auto Clean artwork in
 `preview.png` (1254 x 1254 PNG), copied unchanged on 2026-10-15. Its SHA-256 is
 `3435f585ae145d9693fb20b1350850a8ced3d043d7df56c7eb710f8fb120de0b`.
 The in-game icon and poster retain their verified default B47 artwork. The
-thumbnail source update does not change the currently published Workshop image.
+current Workshop candidate uses this exact thumbnail; the publication receipt records upload verification.

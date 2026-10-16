@@ -24,7 +24,7 @@ Rooms owns cleaning scope settings, borrowing/return policy and permissions. Aut
 
 ## Source Code & Development
 GitHub: https://github.com/B47ANCE/B47ANCEDAutoClean
-Development version 0.5.1-dev.1. This source iteration has not been packaged, deployed or published. Workshop distribution is for testing; G7 remains NOT TESTED / BLOCKED and stable G8 remains BLOCKED.
+Development version 0.5.1-dev.1. Workshop distribution is an MP testing build; G7 remains NOT TESTED / BLOCKED and stable G8 remains BLOCKED.
 
 ## Known Issues
 The conservative native footprint guard can skip unsupported targets, including all targets in some layouts. Ashes, graffiti and arbitrary dirt are unsupported. Native pathfinding, fluids, action reconstruction, observers, cancellation, save/reload, reconnect and restart behavior still require in-game testing. Do not treat offline tests as runtime verification. Update Quartermaster and Auto Clean together when moving from embedded cleaning.

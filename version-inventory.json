@@ -40,7 +40,7 @@
     },
     {
       "path": "docs/WORKSHOP_DESCRIPTION.md",
-      "pattern": "^Development version (?P<version>\\S+)\\. This source iteration"
+      "pattern": "^Development version (?P<version>\\S+)\\. Workshop distribution"
     }
   ],
   "changelog": {
@@ -79,8 +79,8 @@
       "reason": "Original embedded research/native fingerprint evidence retained unchanged with original provenance."
     },
     {
-      "reference": "docs/WORKSHOP_PREPARATION.md; docs/ITERATION_REPORT.md; docs/EXTRACTION_PROVENANCE.json; dist/current/B47ANCEDAutoClean-0.1.0-dev.1.zip and checksum",
-      "reason": "Published 0.1.0-dev.1 extraction/distribution evidence preserved unchanged. The stale current artifact deliberately blocks release validation until separately authorized packaging reconciliation."
+      "reference": "docs/WORKSHOP_PREPARATION.md; docs/ITERATION_REPORT.md; docs/EXTRACTION_PROVENANCE.json; dist/history/published-0.1.0-dev.1/B47ANCEDAutoClean-0.1.0-dev.1.zip and checksum",
+      "reason": "Published 0.1.0-dev.1 extraction/distribution evidence preserved unchanged. The ZIP and checksum were retained with verified hashes in dist/history/published-0.1.0-dev.1 during the authorized 0.5.1-dev.1 Workshop preparation; no artifact was deleted."
     },
     {
       "reference": "docs/CLEAN_AREA.md; dist/clean-area-development-receipt.json",
