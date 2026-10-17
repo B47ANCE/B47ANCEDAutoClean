@@ -1,0 +1,31 @@
+{
+  "gameVersion": "42.21.0",
+  "steamBuild": "25485521",
+  "runtime": "NOT TESTED",
+  "sourceSha256": {
+    "media/lua/shared/Foraging/forageSystem.lua": "74b3a75ab959e95320aa4f022e43b533ef03ef4a5f32ae37a1528ce26b42038e",
+    "media/lua/server/Map/MapObjects/MOFeedingTrough.lua": "920adccac978aaea905923d1b58b7a8511e3102ba6e4abe7b37d27df96729d3c",
+    "media/lua/server/Map/MapObjects/MOHutch.lua": "5138b448f128178c44fa057548825b6e6c1126fd8ef47a392ff583983d9a937d",
+    "media/lua/shared/TimedActions/ISPickUpGroundCoverItem.lua": "1de5b39724df5579653b9aaa50663d107fdf5ef398d71c664bad7c3507e8a039",
+    "media/lua/shared/Moveables/ISMoveableSpriteProps.lua": "a6a5ab5b36da07ce53587218bffd33963d9caf0b53e571107cc66dbe9f77ab4c"
+  },
+  "jarSha256": "e1a69eb743ede60b213a0fe7f8b83d4fcab773036d256cc4543a336f3b058a33",
+  "nativeContracts": {
+    "zombie/iso/IsoGridSquare.class": {
+      "sha256": "92be3b470227da4f28151ea8b6f7c0aca4f0296b0b646dda6bb44929e8149ec6",
+      "origin": "loose",
+      "methods": {
+        "transmitRemoveItemFromSquare(Lzombie/iso/IsoObject;)I": "3fd34a33cafebfc78dbe377cd79e4b2bdc3a9dae4a5d8efc6a6b269ad1203673",
+        "transmitRemoveItemFromSquare(Lzombie/iso/IsoObject;Z)I": "74003c4929d13a62722a439e19e1c20f2f642745ff98b601e132dc3a6092b2bc"
+      }
+    },
+    "zombie/network/GameServer.class": {
+      "sha256": "308ee5247dc8bba4df2283d40d753c6839497767b9342a4adeea60e7c08cfacc",
+      "origin": "jar",
+      "methods": {
+        "RemoveItemFromMap(Lzombie/iso/IsoObject;)I": "f96a26023b5228f85d903c44ff5ab180612247881dfc3ed994ee874706290b01"
+      }
+    }
+  },
+  "trashSpriteCount": 77
+}

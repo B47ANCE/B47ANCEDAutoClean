@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "authoritative_source_roots": [
+    "src/B47ANCEDAutoClean/42",
+    "src/B47ANCEDAutoClean/common"
+  ],
+  "generated_roots": [
+    "dist/"
+  ],
+  "mirror_roots": [],
+  "mod_ids": [
+    "B47ANCEDAutoClean"
+  ],
+  "workshop_id": "3820151540",
+  "build_command": "python scripts/package.py (explicit authorization only)",
+  "validation_command": "python tests/run_tests.py",
+  "required_mod_ids": [
+    "B47ANCEDQuartermaster",
+    "B47ANCEDRooms"
+  ],
+  "public_remote": "https://github.com/B47ANCE/B47ANCEDAutoClean"
+}

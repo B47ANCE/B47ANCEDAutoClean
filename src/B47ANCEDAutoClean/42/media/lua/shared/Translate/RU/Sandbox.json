@@ -1,0 +1,5 @@
+{
+  "Sandbox_B47ANCEDAutoClean": "B47ANCE'd Auto Clean",
+  "Sandbox_B47ANCEDAutoClean_RemoveTrashObjects": "Remove Ground Trash Objects",
+  "Sandbox_B47ANCEDAutoClean_RemoveTrashObjects_tooltip": "Remove supported vanilla decorative trash objects during Clean Building and Clean Area. Dropped inventory items, containers and other props are untouched. Changing this setting cancels active jobs."
+}

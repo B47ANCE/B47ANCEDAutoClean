@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "canonical": "VERSION",
+  "mirrors": [
+    {
+      "path": "docs/PROGRESS.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "docs/WORKSHOP_DESCRIPTION.md",
+      "pattern": "^Separate Clean Building workflow for Build 42.21.0. Version (?P<version>[^ ]+)\\.$"
+    },
+    {
+      "path": "docs/WORKSHOP_CHANGELOG.md",
+      "pattern": "^Version (?P<version>\\S+)$"
+    },
+    {
+      "path": "src/B47ANCEDAutoClean/42/mod.info",
+      "pattern": "^modversion=(?P<version>\\S+)$"
+    },
+    {
+      "path": "src/B47ANCEDAutoClean/42/media/lua/shared/B47ANCEDAutoClean/Identity.lua",
+      "pattern": "version='(?P<version>[^']+)'"
+    },
+    {
+      "path": "README.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "docs/TRASH_OBJECTS.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "README.md",
+      "pattern": "^packaging is .*? Current (?P<version>\\S+) source"
+    },
+    {
+      "path": "docs/WORKSHOP_DESCRIPTION.md",
+      "pattern": "^Development version (?P<version>\\S+)\\. Workshop distribution"
+    }
+  ],
+  "changelog": {
+    "path": "CHANGELOG.md",
+    "pattern": "^## \\[(?P<version>[^\\]]+)\\]"
+  },
+  "packaging": {
+    "artifacts": [
+      {
+        "glob": "dist/current/*.zip",
+        "pattern": "B47ANCEDAutoClean-(?P<version>.+)\\.zip",
+        "zip_members": [
+          {
+            "member": "B47ANCEDAutoClean/42/mod.info",
+            "pattern": "^modversion=(?P<version>[^\\r\\n]+)\\r?$"
+          }
+        ]
+      }
+    ]
+  },
+  "other_versions": [
+    {
+      "category": "dependency",
+      "reference": "B47ANCEDQuartermaster SupplyAPI 1 / B47ANCEDRooms API 1 cleaning capability 1",
+      "reason": "Independent service API versions; not project version"
+    },
+    {
+      "category": "pz",
+      "reference": "versionMin 42.21.0",
+      "reason": "Installed game compatibility"
+    }
+  ],
+  "historical": [
+    {
+      "reference": "research/auto-clean; tests/fixtures/auto_clean_native_hashes.json",
+      "reason": "Original embedded research/native fingerprint evidence retained unchanged with original provenance."
+    },
+    {
+      "reference": "docs/WORKSHOP_PREPARATION.md; docs/ITERATION_REPORT.md; docs/EXTRACTION_PROVENANCE.json; dist/history/published-0.1.0-dev.1/B47ANCEDAutoClean-0.1.0-dev.1.zip and checksum",
+      "reason": "Published 0.1.0-dev.1 extraction/distribution evidence preserved unchanged. The ZIP and checksum were retained with verified hashes in dist/history/published-0.1.0-dev.1 during the authorized 0.5.1-dev.1 Workshop preparation; no artifact was deleted."
+    },
+    {
+      "reference": "docs/CLEAN_AREA.md; dist/clean-area-development-receipt.json",
+      "reason": "Frozen 0.2.0-dev.1 area implementation/144-check evidence. It remains source history, not current trash validation."
+    }
+  ]
+}

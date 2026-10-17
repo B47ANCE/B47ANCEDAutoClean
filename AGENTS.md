@@ -4,9 +4,9 @@ Read `%USERPROFILE%/.codex/AGENTS.md`. Lua-only; exact authority-owned resource
 handles; authenticated multiplayer commands or exact offline local-player binding.
 
 Canonical version: VERSION. Authoritative source: src/B47ANCEDAutoClean/42.
-Mod ID: B47ANCEDAutoClean. Initial project version: 0.1.0-dev.1. No Workshop ID
-has been assigned. Proposed public GitHub destination: B47ANCE/B47ANCEDAutoClean;
-create/configure only after the user approves that exact destination.
+Mod ID: B47ANCEDAutoClean. Initial project version: 0.1.0-dev.1.
+Workshop ID: 3820151540. User-approved public GitHub repository: B47ANCE/B47ANCEDAutoClean.
+Feature work uses feature/standalone-auto-clean and PR review before main.
 
 Required dependencies: Quartermaster SupplyAPI 1 and Rooms API 1 / cleaning 1.
 Quartermaster owns configured supplies/transfers; Rooms owns geometry, policy and

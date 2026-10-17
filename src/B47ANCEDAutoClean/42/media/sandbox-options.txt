@@ -1,0 +1,8 @@
+VERSION = 1,
+option B47ANCEDAutoClean.RemoveTrashObjects
+{
+    type = boolean,
+    default = true,
+    page = B47ANCEDAutoClean,
+    translation = B47ANCEDAutoClean_RemoveTrashObjects,
+}

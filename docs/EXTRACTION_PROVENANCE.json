@@ -1,0 +1,94 @@
+{
+  "quartermasterSourceCommit": "9003109d2e5eb2dda6590cc66922895e1732f3b3",
+  "quartermasterVersionObserved": "0.10.0-dev.1",
+  "autoCleanVersion": "0.1.0-dev.1",
+  "runtime": {
+    "BuildingJob.lua": {
+      "originalSha256": "57cb53ca9aeeda9f79116785dfb8c646a140838f715ee6c5cbc0a328c784224b",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/BuildingJob.lua"
+    },
+    "BuildingNative.lua": {
+      "originalSha256": "78a42251176858a2c3ee301e00c214bd4268ee152886934cfc711726d5d0ce68",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/BuildingNative.lua"
+    },
+    "BuildingWire.lua": {
+      "originalSha256": "8a7c45f0aeff03bd8e4c50313bcb7311b0986b5cd1ce6563b7558071a232c832",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/BuildingWire.lua"
+    },
+    "ClientTransport.lua": {
+      "originalSha256": "da5bfe7f9957ac0dd16455518251322e840ea84770e5b5fe94fe18236496f470",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/ClientTransport.lua"
+    },
+    "Guard.lua": {
+      "originalSha256": "3cc9fc4895f8a1a814c0558a8098cce75ab1fb7a71991f15fcd03d4b8a59a36e",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/Guard.lua"
+    },
+    "LocalQueue.lua": {
+      "originalSha256": "33b6a7ff57e53d66e1f1649e86a498d909a5836ce0c28c93b9d736ae4f837ea4",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/LocalQueue.lua"
+    },
+    "NativeAction.lua": {
+      "originalSha256": "50404e66029b8e40ae37055e221ccd645cf6749c1e6d32e1774e0be36c271548",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/NativeAction.lua"
+    },
+    "NativePort.lua": {
+      "originalSha256": "7b7acee9ce112991862132314206652c4aac74e68915851c78451fe3c13e9bb5",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/NativePort.lua"
+    },
+    "NativeWire.lua": {
+      "originalSha256": "4c31c81360dc3a5dc68a607147d5e36b9c5627a60d49295d6bfb063f175eb5f9",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/NativeWire.lua"
+    },
+    "Poc.lua": {
+      "originalSha256": "2d2f159d5e8b338c212282bd049164f20f82fd7d760064228910e1c9fc2dfd6c",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/Poc.lua"
+    },
+    "ServerTransport.lua": {
+      "originalSha256": "f1ee9bcc0074b32441acab364a13d3c3f56b4cb1bd3f19ed3a7022c87abb4ba3",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/ServerTransport.lua"
+    },
+    "Startup.lua": {
+      "originalSha256": "3bcfbc95962c686c2dda9627be57fdb7367b2113c814d02c482d7dd92c83dce0",
+      "originalPath": "src/B47ANCEDQuartermaster/42/media/lua/shared/B47ANCEDQuartermaster/AutoClean/Startup.lua"
+    }
+  },
+  "tests": {
+    "run_auto_clean_building.py": "3da6723ab415189f6dc3252ab7be692c87239cf7b6bf75a859bde380606b69ed",
+    "run_auto_clean_guard.py": "8133166b9ff85fec7ba1cdd6c4d27bcdc3ff606fd2e7b0f411b973e428c9389d",
+    "run_auto_clean_single_player.py": "54af6915c8f151d3ea04d2b79fdf7f41f5d731c232f71819da83b2ac94b1af1c",
+    "run_auto_clean_transport.py": "765c0070b0d414620238bf8cf3a83f3d5c420d0c54d709eff822a589e6a6a248",
+    "test_auto_clean_building.lua": "c59fd12a870b85c0775161b8ca897e6ee067e41996d66a853f6e59fafc5811c3",
+    "test_auto_clean_building_click.lua": "e1794cc802ba09649ca2721db8f05d6231fa04c2fbaa8b0343362d300c81fe32",
+    "test_auto_clean_guard.lua": "594a7d24f74e3c3276c35ece5b2fbe18a89e333ed8d42bd9eb2a17004c0b5455",
+    "test_auto_clean_single_player.lua": "f6dc67febea2672fd54aca949843076840df57b659e93666942671c250b1bd44",
+    "test_auto_clean_startup.lua": "cd0764c7dd616c13c65d89d82f1da5eb079e8dd15f97f06092475ffe4ae2a920",
+    "test_auto_clean_transport.lua": "14be5cce32f8a0a4ca431cf0dd2ec62eef27213c0d436860482ce7705b8e9e4e"
+  },
+  "namespaceOnlyModules": [
+    "BuildingJob.lua",
+    "BuildingWire.lua",
+    "ClientTransport.lua",
+    "Guard.lua",
+    "LocalQueue.lua",
+    "NativeAction.lua",
+    "NativePort.lua",
+    "NativeWire.lua",
+    "Poc.lua",
+    "ServerTransport.lua"
+  ],
+  "changedModules": [
+    "Startup.lua (independent lifecycle/provider negotiation)",
+    "BuildingNative.lua (public SupplyAPI adapter)"
+  ],
+  "addedModules": [
+    "Identity.lua"
+  ],
+  "guardPolicy": "Original mutation/footprint/local/sender/reconstruction code retained; only require namespaces changed in listed modules.",
+  "quartermasterSupplyApiSha256": "85f1361bee0eee15431de3708ff87cd135c91ea3b21708cdd89868b71696594f",
+  "gameBuild": "42.21.0",
+  "steamBuild": "25485521",
+  "SP": "NOT TESTED in PZ",
+  "G7": "BLOCKED / NOT TESTED",
+  "stableG8": "BLOCKED",
+  "quartermasterSupplyApiCommit": "5712b7a94a5ef92f3fc8ae689d661f9c9c7ac8e6"
+}
