@@ -1,8 +1,8 @@
 # B47ANCE'd Auto Clean
 
-Project Version: 0.5.1-dev.1
+Project Version: 0.5.2-dev.1
 
-Lua-only Clean Building and Clean Area mod. Requires B47ANCEDQuartermaster SupplyAPI 1 and B47ANCEDRooms API 1 cleaning capability 1. Authoritative source: src/B47ANCEDAutoClean/42. Mod ID: B47ANCEDAutoClean. [Workshop item 3820151540](https://steamcommunity.com/sharedfiles/filedetails/?id=3820151540).
+Lua-only Clean Building (Rooms-designated tiles in the current physical building) and Clean Area mod. Requires B47ANCEDQuartermaster SupplyAPI 1 and B47ANCEDRooms API 1 cleaning capability 1. Authoritative source: src/B47ANCEDAutoClean/42. Mod ID: B47ANCEDAutoClean. [Workshop item 3820151540](https://steamcommunity.com/sharedfiles/filedetails/?id=3820151540).
 
 Right-click **Clean Area**, select tiles with Rooms rectangle or paint/erase controls, add explicit floors, then choose **Start Cleaning**. Nothing starts until confirmation; Cancel/Escape discard the preview. Clean Building remains available. See [selection behavior, guards and validation](docs/CLEAN_AREA.md).
 
@@ -12,17 +12,17 @@ Clean Building and Clean Area also remove supported vanilla decorative ground tr
 
 SP and multiplayer use the retained guarded native actions. Rooms owns permissions and cleaning scope settings; Auto Clean owns trash sandbox settings; Quartermaster owns configured supply storage and native supply transfers; this mod owns the cleaning workflow, menu, action guards and transient jobs. Default recipe: 10 mL bleach first, then water to remaining bucket capacity.
 
-MP testing build - dedicated multiplayer NOT TESTED. Both Quartermaster (Workshop 3807217050) and Rooms (Workshop 3820077442) are required Workshop items and native mod.info dependencies. Enable all three mods on every peer. Native/SP/dedicated acceptance NOT TESTED; G7 and stable G8 BLOCKED. Public source repository: [B47ANCE/B47ANCEDAutoClean](https://github.com/B47ANCE/B47ANCEDAutoClean). Implementation is on feature/standalone-auto-clean pending PR review. No local deployment or game/server launch accompanies publication.
+MP testing build - dedicated multiplayer NOT TESTED. Both Quartermaster (Workshop 3807217050) and Rooms (Workshop 3820077442) are required Workshop items and native mod.info dependencies. Enable all three mods on every peer. Native/SP/dedicated acceptance NOT TESTED; G7 and stable G8 BLOCKED. Public source repository: [B47ANCE/B47ANCEDAutoClean](https://github.com/B47ANCE/B47ANCEDAutoClean). Source changes use reviewed feature PRs before merging main. No local deployment or game/server launch accompanies publication.
 
 Run `python tests/run_tests.py` with adjacent Quartermaster and Rooms checkouts.
 The validator reads installed Build 42.21 evidence and never launches the game.
 Use `python scripts/check_versions.py --root .` for version mirrors. Explicit
-packaging is `python scripts/package.py`. Current 0.5.1-dev.1 source is published to Workshop as an explicitly authorized MP testing build; all 80 downloaded mod files match staging exactly. The prior published 0.1.0-dev.1 ZIP and checksum are preserved unchanged in dist/history/published-0.1.0-dev.1; dist/current holds the new package. See [publication validation](docs/PUBLICATION_0.5.1.md). Local deployment is separate.
+packaging is `python scripts/package.py`. Current 0.5.2-dev.1 source is selected for the user-authorized Workshop MP testing update after checks and PR merge. Prior package/provenance remain preserved under dist/history and prior staging. See [current icon and validation](docs/ICON.md) and [historical 0.5.1 distribution](docs/PUBLICATION_0.5.1.md). Local deployment is separate.
 See [ownership and migration](docs/ARCHITECTURE.md), [historical initial extraction evidence](docs/ITERATION_REPORT.md)
 and [source provenance](docs/EXTRACTION_PROVENANCE.json). The project/Workshop thumbnail is the user-supplied Auto Clean artwork in
 `preview.png` (1254 x 1254 PNG), copied unchanged on 2026-10-15. Its SHA-256 is
 `3435f585ae145d9693fb20b1350850a8ced3d043d7df56c7eb710f8fb120de0b`.
-The in-game icon and poster retain their verified default B47 artwork. The
+The in-game mod icon uses the approved transparent mop-and-bucket artwork, exported to 64 x 64 RGBA. Its 1254 x 1254 master and prompt are retained under assets/auto-clean-icon. The poster retains its verified default B47 artwork. The
 Workshop thumbnail uses a full-resolution JPEG export of this artwork to fit
 Steam's preview limit; the original PNG remains unchanged. The publication
 receipt records both hashes and upload verification.

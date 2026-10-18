@@ -97,7 +97,7 @@ if args.source:
     path=ROOT/'tests/test_auto_clean_startup.lua';files[path.relative_to(ROOT).as_posix()]=sha(path)
 result={**base['report'],'environment':'Lua 5.1; actual Rooms source and native Lua; simulated engine/network/storage/walking and Quartermaster configuration reader',
         'buildingScenarioGroups':groups,'roomsVersionObserved':rooms_version,
-        'roomsHeadObserved':subprocess.check_output(['git','-C',str(rooms),'rev-parse','HEAD']).decode().strip(),
+ 'roomsHeadObserved':subprocess.check_output(['git','-C',str(rooms),'rev-parse','HEAD']).decode().strip() if (rooms/'.git').exists() else None,
         'roomsSources':rooms_before,'buildingNativeSources':native,'buildingFiles':files,
         'simulatedBuildingReceipt':base['base']['plain'](lua.globals().AUTO_CLEAN_BUILDING_RESULT),
         'activation':'Production shared startup and modules; never invoked in PZ' if args.source else 'Offline research installers only; never invoked in PZ',

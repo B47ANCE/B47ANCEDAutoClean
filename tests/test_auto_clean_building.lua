@@ -5,7 +5,7 @@ local cases=0
 local function test(name,fn) local ok,e=pcall(fn);assert(ok,name..': '..tostring(e));cases=cases+1 end
 local function list(t) return {size=function() return #t end,get=function(_,i) return t[i+1] end} end
 local API
-local function fixture(carried)
+local function fixture(carried,designated)
  local f=AUTO_CLEAN_FIXTURE();local data={}
  ModData={get=function(k) return data[k] end,getOrCreate=function(k) data[k]=data[k] or {};return data[k] end}
  SandboxVars={B47ANCEDRooms={Enabled=true}}
@@ -49,7 +49,7 @@ local function fixture(carried)
  -- Preserve original recursive predicate methods used by the installed cleaning action.
  local def={getIDString=function() return 'native-building-test-room' end,getName=function() return 'Test room' end,
   getX=function() return 9 end,getY=function() return 9 end,getX2=function() return 16 end,getY2=function() return 12 end,getZ=function() return 0 end}
- local buildingDef={getRooms=function() return list({def}) end}
+ local buildingDef={getRooms=function() error('cleaning enumerated vanilla room definitions instead of Rooms designations') end}
  local building={getDef=function() return buildingDef end}
  for x=9,15 do for y=9,11 do
   local k=x..':'..y..':0';local sq=f.cells[k]
@@ -92,6 +92,15 @@ local function fixture(carried)
  if not carried then f.actor.tool=nil end
  sendRemoveItemFromContainer=function(c,item) f.removes=(f.removes or 0)+1 end
  sendAddItemToContainer=function(c,item) f.adds=(f.adds or 0)+1 end
+ -- Current Rooms cleaning scopes come from persisted designated tiles. This is
+ -- fixture-owned ModData, not a bypass or a change to provider/runtime source.
+ if designated~=false then
+  local world='11111111-1111-1111-1111-111111111111'
+  local id=world..':22222222-2222-2222-2222-222222222222'
+  local rows=type(designated)=='table' and designated or {{0,9,9,15},{0,10,9,15},{0,11,9,15}}
+  data.B47ANCEDRooms={customRooms={schema=2,world=world,revision=0,serial=1,records={
+   [id]={id=id,ordinal=1,name='Cleaning test area',owner='building-tester',revision=1,rows=rows,createdAt=1,updatedAt=1}}}}
+ end
  B47ANCEDQuartermaster={Targets={valid=function(r) return r.obj==crate and r.container==crate.container and not crate.removed end},
   Store={load=function() if not crate.unconfigured then return {cats={clean=true},items={}} end end},Presets={resolve=function(config) return config end}}
  API=API or require 'B47ANCEDRooms/API';f.api=API;f.data=data
@@ -139,6 +148,18 @@ test('one building request fetches exact supplies, mixes once, cleans two distan
  assert(math.abs(f.bleach.fc:getAmount()-0.99)<0.00002 and f.bucket.fc:getAmount()<10)
  assert(f.adds==6 and f.removes==6 and f.actor:getPrimaryHandItem()==nil)
  assert(not f.lastAction:complete());AUTO_CLEAN_BUILDING_RESULT=r
+end)
+
+test('building without Rooms designations does not borrow or mutate anything',function()
+ local f=fixture(nil,false);local r=f:run()
+ assert(r.status=='cancelled' and r.reason=='CleaningNoDesignatedRooms' and r.actions==0 and not f.adds and not f.removes)
+ assert(f.target.cleans==0 and f.second.cleans==0)
+end)
+
+test('building respects designated tile extent and leaves undesignated dirt alone',function()
+ local f=fixture(nil,{{0,9,9,12},{0,10,9,12},{0,11,9,12}});local r=f:run()
+ assert(r.status=='done' and r.actions==1 and r.returned==3)
+ assert(f.target.cleans==1 and f.second.cleans==0 and f.second.blood)
 end)
 test('mixing can happen at water before walking to a distant dirty target',function()
  local f=fixture();f.target.blood=false;f.target.grime=false

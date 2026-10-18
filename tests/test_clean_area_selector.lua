@@ -37,9 +37,12 @@ end
 function Button:setEnable(value) self.enabled=value end
 local function click(button) return button.onclick(button.target,button) end
 local restoreCount=0
+local dialogChoice='accept'
 B47RoomsUI={Button=Button,skin=function() end,Theme={metrics=function() return {button=28} end,colors={text={}}},
  Renderer={text=function() end,fit=function(value) return value end},
- Dialog={active=function() return false end},Focus={restore=function() restoreCount=restoreCount+1 end}}
+ Dialog={active=function() return false end,confirm=function(_,_,buttons,callback)
+  assert(buttons.accept and buttons.cancel);callback(dialogChoice)
+ end},Focus={restore=function() restoreCount=restoreCount+1 end}}
 package.loaded['ISUI/ISPanelJoypad']=true;package.loaded['ISUI/ISContextMenu']=true
 package.loaded['B47RoomsUI/Controls']=true;package.loaded['B47RoomsUI/Dialog']=true
 package.loaded['B47ANCEDRooms/Editor']=nil;package.loaded['B47ANCEDAutoClean/AreaSelector']=nil
@@ -114,6 +117,14 @@ check('inherited controller world selection and focus exit are available',functi
  p:onJoypadDirRight({});p:onJoypadDown(Joypad.AButton,{});assert(p.draft.geometry.count==2)
  p:onJoypadDown(Joypad.BButton,{});assert(not p.worldFocus and not p.closed)
  p:onJoypadDown(Joypad.BButton,{});assert(p.closed)
+end)
+check('controller discard confirmation can decline before accepting cancellation',function()
+ local cancelled=0;local p=Selector.open(0,function() error('unexpected start') end,function() cancelled=cancelled+1 end)
+ drag(p,13,9,15,11);p:onJoypadDown(Joypad.BButton,{})
+ dialogChoice='cancel';p:onJoypadDown(Joypad.BButton,{})
+ assert(not p.closed and cancelled==0 and p.draft.geometry.count==9)
+ dialogChoice='accept';p:onJoypadDown(Joypad.BButton,{})
+ assert(p.closed and cancelled==1)
 end)
 check('viewport resize keeps sidebar and controls inside the player viewport',function()
  local p=Selector.open(0,function() end)
