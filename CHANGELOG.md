@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.2-dev.1] - 2026-10-18
+
+- Compatible PATCH: use the approved transparent mop-and-bucket artwork as the 64 x 64 mod icon. Preserve its original master and prompt. Thumbnail and poster remain byte-for-byte unchanged; no gameplay, authority, configuration or dependency change.
+- Refresh the offline building fixture for Rooms designated geometry, retaining all native and permission guards. Add regressions for empty designations and exclusion of undesignated dirty tiles; the fixture forbids vanilla room enumeration. No dependency source changes.
+- Refresh the controller dialog double with discard accept/decline coverage and run the entire cached published Rooms provider in an isolated process. Current Rooms 0.2.0-dev.7 and cached published 0.2.0-dev.5 both pass; do not require different compatible versions to have identical API bytes.
+- 194 offline scenarios and source/version/package/icon checks PASS. Preserve the prior published package and checksum unchanged. SteamCMD cached authentication was rejected; an upload requires local reauthentication. Actual mod-list/SP/dedicated runtime remains NOT TESTED.
+- Publish only after current offline/version/package/source checks and authorized PR merges pass. Actual SP/dedicated runtime NOT TESTED; G7/stable G8 BLOCKED. No automatic Steam restart: ask for each specific restart.
+
 ## [0.5.1-dev.1] - 2026-10-15
 
 - Publication preparation: explicitly authorized Workshop MP testing update with current feature set and thumbnail. Preserve the old ZIP/checksum with verified hashes in dist/history/published-0.1.0-dev.1 and validate the new package separately. Earlier source-iteration failures below remain historical; see docs/PUBLICATION_0.5.1.md for current checks.

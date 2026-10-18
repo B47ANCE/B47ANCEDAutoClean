@@ -1,6 +1,6 @@
 # Ownership and extraction
 
-Project Version: 0.5.1-dev.1
+Project Version: 0.5.2-dev.1
 
 B47ANCEDAutoClean is a separate runtime mod with required dependencies
 B47ANCEDQuartermaster and B47ANCEDRooms. The user explicitly requires

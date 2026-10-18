@@ -41,6 +41,14 @@
     {
       "path": "docs/WORKSHOP_DESCRIPTION.md",
       "pattern": "^Development version (?P<version>\\S+)\\. Workshop distribution"
+    },
+    {
+      "path": "docs/ICON.md",
+      "pattern": "^Project Version: (?P<version>\\S+)$"
+    },
+    {
+      "path": "docs/MOD_OVERVIEW.json",
+      "pattern": "^  \"version\": \"(?P<version>[^\\\"]+)\"[,]?$"
     }
   ],
   "changelog": {
@@ -85,6 +93,10 @@
     {
       "reference": "docs/CLEAN_AREA.md; dist/clean-area-development-receipt.json",
       "reason": "Frozen 0.2.0-dev.1 area implementation/144-check evidence. It remains source history, not current trash validation."
+    },
+    {
+      "reference": "docs/PUBLICATION_0.5.1.md; dist/history/published-0.5.1-dev.1; dist/workshop-publish-0.5.1-dev.1-20261015-retry1",
+      "reason": "Immutable prior publication/package/provenance and 190-scenario evidence; not current runtime acceptance."
     }
   ]
 }

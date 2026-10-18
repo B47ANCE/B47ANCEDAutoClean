@@ -1,0 +1,15 @@
+{
+  "source_sha256": "fe4e6fbdd29a1c13186c2e12255f8cffcc01078706cf413d78ed2b2e461cda4c",
+  "source_dimensions": [
+    1254,
+    1254
+  ],
+  "icon_sha256": "257fd838bd1c4bf0c7bf58bab275481deb94d85b77d712d7c4b2b726c6fb52ea",
+  "icon_dimensions": [
+    64,
+    64
+  ],
+  "method": "Pillow LANCZOS size export only; alpha preserved; no new artwork generation",
+  "thumbnail_unchanged_sha256": "3435f585ae145d9693fb20b1350850a8ced3d043d7df56c7eb710f8fb120de0b",
+  "poster_unchanged_sha256": "0e30a776c77dbf66eeb9acfa7596c7f850cb5b334e8873ef94acbb3b071582c3"
+}
