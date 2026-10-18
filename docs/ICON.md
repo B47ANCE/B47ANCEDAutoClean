@@ -55,8 +55,11 @@ and runtime limits separately from dependency discovery.
 Rooms environment and the new designation/discard regressions. Current/release
 version checks, source inventory, PNG integrity/alpha/dimensions, archive
 CRC/member/path/case/source parity and unchanged thumbnail/poster hashes PASS.
-Package SHA-256:
+Pre-merge candidate SHA-256:
 eded666e50d1c65e657c1ade2abe44644585d88b464c488d279624eb60dedae0.
+The merged checkout normalized line endings; retain that candidate unchanged
+under dist/history/pre-merge-0.5.2-dev.1 and rebuild from exact merged source.
+Final package SHA-256: 0a55a070ab209a94b8ec7542969749f015f0f96d6666cb42a8ee16ec7b405ff4.
 SteamCMD rejected cached authentication during dependency download verification;
 publication remains blocked until the user reauthenticates locally. This is an
 authentication failure, not an offline compatibility or runtime PASS.
@@ -67,3 +70,12 @@ authorized Workshop MP test update only after offline checks and PR merge pass.
 The uploader must not restart or launch Steam. Ask and wait for explicit approval
 for the specific desktop restart after verified upload success. Publication does
 not deploy local mods or launch the game/server.
+
+## Merge and upload preparation
+
+PR #1 was already merged. PR #2 merged the icon/fixtures at
+`6616aabaadd34de40caf3d6e634d0f92a20627a7`; GitHub reported a clean merge
+and no configured CI checks or branch protection. No required checks were bypassed.
+The follow-up record refreshes source-digest/provenance after checkout only;
+no runtime gameplay changes or stable release tag. Workshop authentication
+remains blocked until local reauthentication; Steam desktop remains unchanged.

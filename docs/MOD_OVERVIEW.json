@@ -3,15 +3,35 @@
   "id": "clean",
   "name": "Auto Clean",
   "version": "0.5.2-dev.1",
-  "source_digest": "fa40cfb84f6604549fc4681cfebb97fb4e596a27909e5fe153dd1eb1461bbcd1",
+  "source_digest": "6a87b58d8f3d0baa16fd31a12f024b2ee8c427f7bf3395214ecf143ef987b1e9",
   "reviewed": true,
   "features": [
-    {"status": "Source", "text": "Clean Building consumes Rooms-designated tiles in the current physical building. Clean Area uses confirmed rectangle/paint/erase/floor selection without saving designations."},
-    {"status": "Source", "text": "Quartermaster SupplyAPI 1 fetches configured supplies and returns borrowed tools. Bucket preparation uses 10 mL bleach first, then water; native timings and server authority guards remain active."},
-    {"status": "Source", "text": "Decorative ground-trash cleanup uses an eligible broom or vanilla pickup and preserves dropped inventory items. Vanilla current-action and separate whole-job progress bars remain available."},
-    {"status": "Source", "text": "Approved transparent mop-and-bucket mod icon; original thumbnail and poster preserved."}
+    {
+      "status": "Source",
+      "text": "Clean Building consumes Rooms-designated tiles in the current physical building. Clean Area uses confirmed rectangle/paint/erase/floor selection without saving designations."
+    },
+    {
+      "status": "Source",
+      "text": "Quartermaster SupplyAPI 1 fetches configured supplies and returns borrowed tools. Bucket preparation uses 10 mL bleach first, then water; native timings and server authority guards remain active."
+    },
+    {
+      "status": "Source",
+      "text": "Decorative ground-trash cleanup uses an eligible broom or vanilla pickup and preserves dropped inventory items. Vanilla current-action and separate whole-job progress bars remain available."
+    },
+    {
+      "status": "Source",
+      "text": "Approved transparent mop-and-bucket mod icon; original thumbnail and poster preserved."
+    }
   ],
   "limits": "Source inspection and offline simulated-engine tests only. Actual SP/split-screen, mod-list rendering and dedicated multiplayer NOT TESTED. G7/stable G8 BLOCKED. Footprint/pathfinding/synchronization/rejoin/save/restart acceptance remains a runtime gate. Workshop distribution is not runtime proof.",
-  "evidence": ["README.md", "docs/ICON.md", "docs/ARCHITECTURE.md", "docs/PROGRESS.md", "docs/TRASH_OBJECTS.md", "src/B47ANCEDAutoClean/42/mod.info", "assets/auto-clean-icon/provenance.json"],
+  "evidence": [
+    "README.md",
+    "docs/ICON.md",
+    "docs/ARCHITECTURE.md",
+    "docs/PROGRESS.md",
+    "docs/TRASH_OBJECTS.md",
+    "src/B47ANCEDAutoClean/42/mod.info",
+    "assets/auto-clean-icon/provenance.json"
+  ],
   "relations": []
 }
